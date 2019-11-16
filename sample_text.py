@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 # -------------------------------------------------------------------------------
-import libreriaFrames as lf
+import Libreria.libreriaFrames as lf
 # -------------------------------------------------------------------------------
 import Clases.Personaje_principal as pp
 import Clases.enemigos as e
