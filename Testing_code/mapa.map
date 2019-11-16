@@ -1,0 +1,22 @@
+[info]
+img:terrenogen.png
+mapa: ..........
+      ...###....##
+      ...a##....
+      .......a##
+      ....aa....
+
+[.]
+tipo:vacio
+fil=0
+col=0
+
+[#]
+tipo:muro
+fil:6
+col:18
+
+[a]
+tipo:agua
+fil:3
+col:13
