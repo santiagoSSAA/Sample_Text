@@ -13,13 +13,17 @@ class Generador(pygame.sprite.Sprite):
         self.velx = 0
         self.vely = 0
         self.rect.x = random.randrange(200,1000)
-        self.rect.y = suelo
+        self.rect.y = suelo - 50
         self.identificador = identificador
         self.cantidadEnemigos = CANTIDADENEMIGOS
+        self.salirSpown = False
+        #esto es el temporizador del generador
+        self.temp = random.randrange(100,150)
     
     def update(self):
         # define movimiento
         self.movimiento()
+        self.temp -= 1
 
     def movimiento(self):
         self.rect.x += self.velx

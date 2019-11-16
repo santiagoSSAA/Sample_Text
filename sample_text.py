@@ -8,7 +8,8 @@ import Clases.Personaje_principal as pp
 import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
-import Clases.generadores as g
+import Clases.generadores as ge
+import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
 ALTO = 720
@@ -30,6 +31,8 @@ def main():
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
+
+    spawnMamas = pygame.sprite.Group()
 
     # Cargar imagenes
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png").convert_alpha()
@@ -57,14 +60,21 @@ def main():
     objetoMusica= o.Objeto(listaSpritesObjeto[2][0],2)          # 2 - Musica
     objetoPhoto = o.Objeto(listaSpritesObjeto[2][1],3)          # 3 - photoshop
     objetoProgramacion = o.Objeto(listaSpritesObjeto[2][2],4)   # 4 - programacion
+    #objetoPuerta = o.Objeto(listaSpritesObjeto[3][2],5)
     objetos.add(objetoScript)
     objetos.add(objetoMusica)
     objetos.add(objetoPhoto)
     objetos.add(objetoProgramacion)
 
     # Sprites y clase generadores
-    for i in range(1,4):
-        pass
+    #en la clase generadores(puertas) se producen las mamas
+    numero_Puertas = random.randrange(1,5)
+
+    for i in range(numero_Puertas): # crea n rivales
+        puerta = ge.Generador(listaSpritesObjeto[3][2],5,SUELO)
+        generadores.add(puerta)
+
+
 
 
     # Sprites y clase imagen
@@ -156,6 +166,20 @@ def main():
             if background.velx != 0 and ob.rect.y != 30:
                 ob.velx += background.velx
             pass
+
+        #Creador Spawns Mama
+        for g in generadores:
+            if len(enemigos) < (3*len(generadores)):
+                if g.temp == 0:
+                    g.salirSpown = True
+                if g.salirSpown:
+                    spMama = e.Mama(listaSpritesMama)
+                    spMama.rect.x = g.rect.x               
+                    spMama.rect.bottom =g.rect.bottom
+                    enemigos.add(spMama)
+                    g.salirSpown = False
+                    g.temp = random.randrange(100,150)
+            
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         listaColisiones = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -173,12 +197,36 @@ def main():
                 listaColisiones[0].rect.x = 450
                 listaColisiones[0].rect.y = 30
             jugador.objetosObtenidos.append(listaColisiones[0].identificador)
+
+        #Colisiones jugador a Enemigos
+        for ene in enemigos:
+            ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
+            for i in ColisionesEnemigos:
+                if abs(jugador.rect.bottom - i.rect.top) <= 5 and jugador.vely > 0 :
+                    print("sucede")
+                    enemigos.remove(i)
+        
+        #Colisiones Enemigos contra el jugador
+        ColisionJugadorEnemigo = pygame.sprite.spritecollide(enemigos, jugador, False)
+            
+        
+        """
+        if len(ColisionesEnemigos) > 0:
+            for i in ColisionesEnemigos:
+                if jugador.rect.bottom == i.rect.top:
+                    enemigos.remove(i)
+            
+            if jugador.rect.bottom == ColisionesEnemigos[0].rect.top :
+                enemigos.remove(ColisionesEnemigos[0])
+            """
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
         jugadores.update()
         enemigos.update()
         objetos.update()
+        generadores.update()
+        spawnMamas.update()
         
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
@@ -188,6 +236,8 @@ def main():
         enemigos.draw(pantalla)
         jugadores.draw(pantalla)
         objetos.draw(pantalla)
+        generadores.draw(pantalla)
+        spawnMamas.draw(pantalla)
 
         # Refrescar la pantalla
         pygame.display.flip()

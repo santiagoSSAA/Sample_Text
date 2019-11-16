@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import *
+import random
 
 class Mama(pygame.sprite.Sprite):
     def __init__(self,listaSprites):
@@ -12,7 +13,7 @@ class Mama(pygame.sprite.Sprite):
         self.velx = 0
         self.vely = 0
         # direccion
-        self.direccion = 0
+        self.direccion = random.randrange(2)
         # numero de frames
         self.rect.x = 300
         self.rect.y = 560
