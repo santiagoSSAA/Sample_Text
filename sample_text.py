@@ -48,6 +48,8 @@ def main():
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugadores.add(jugador)
+        #Vidas Santiago
+    vidas = jugador.vida
     
     """
     # Sprites y clase enemigo
@@ -141,7 +143,7 @@ def main():
             # Movimiento mama (definir los limites de movimiento en la mama)
             if ene.rect.right >= background.rect.right:
                 ene.direccion = 1
-            elif ene.rect.left <= background.rect.left:
+            elif ene.rect.left <= 180:
                 ene.direccion = 0
             
             # Calculo de velocidades mama-entorno
@@ -180,6 +182,19 @@ def main():
                     g.salirSpown = False
                     g.temp = random.randrange(100,150)
             
+            if background.velx < 0:
+                g.izquierda()
+            elif background.velx > 0:
+                g.derecha()
+            else:
+                g.idle()
+
+            # calculo de las velocidades con el entorno
+            if background.velx != 0:
+                g.velx += background.velx
+            else:
+                g.velx = 0
+            
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         listaColisiones = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -203,22 +218,24 @@ def main():
             ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
             for i in ColisionesEnemigos:
                 if abs(jugador.rect.bottom - i.rect.top) <= 5 and jugador.vely > 0 :
-                    print("sucede")
                     enemigos.remove(i)
-        
+      
         #Colisiones Enemigos contra el jugador
-        ColisionJugadorEnemigo = pygame.sprite.spritecollide(enemigos, jugador, False)
-            
-        
-        """
-        if len(ColisionesEnemigos) > 0:
-            for i in ColisionesEnemigos:
-                if jugador.rect.bottom == i.rect.top:
-                    enemigos.remove(i)
-            
-            if jugador.rect.bottom == ColisionesEnemigos[0].rect.top :
-                enemigos.remove(ColisionesEnemigos[0])
-            """
+        eliminacion = False
+        for ene in enemigos:
+            ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, eliminacion)
+            for i in ColisionJugadorEnemigo:
+                if abs(ene.rect.left - i.rect.right) <= 10 or abs(ene.rect.right - i.rect.left) <= 10:
+                    jugadores.remove(i)
+                    vidas -= 1
+                    print ('te quedan ', vidas , 'Vidas')
+                    jugador = pp.Jugador(listaSpritesSantiago)
+                    print ('hotel? trivag')
+                    jugadores.add(jugador)
+                    jugador.idle()
+                    print ('jugador', len(jugadores))
+                    jugador.vida = vidas
+
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()

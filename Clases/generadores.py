@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 
-VELOCIDAD = 1
+VELOCIDAD = 0
 CANTIDADENEMIGOS = 5
 
 class Generador(pygame.sprite.Sprite):
