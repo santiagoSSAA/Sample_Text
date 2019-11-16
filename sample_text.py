@@ -1,4 +1,4 @@
-#ODIO WINDOWS XD
+#ODIO WINDOWS XD 2.0
 import pygame
 from pygame.locals import *
 # -------------------------------------------------------------------------------
