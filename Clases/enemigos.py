@@ -1,0 +1,74 @@
+import pygame
+from pygame.locals import *
+
+class Mama(pygame.sprite.Sprite):
+    def __init__(self,listaSprites):
+        pygame.sprite.Sprite.__init__(self)
+        self.listaSprites = listaSprites
+        self.accion = 0
+        self.frame = 0
+        self.image = self.listaSprites[self.accion][self.frame]
+        self.rect = self.image.get_rect()
+        self.velx = 0
+        self.vely = 0
+        # direccion
+        self.direccion = 0
+        # numero de frames
+        self.rect.x = 300
+        self.rect.y = 560
+        self.numeroFrames = 4
+        # contador
+        self.contadorAnimacion = 0
+
+        """
+        parado derecha = 0
+        correr derecha = 1
+        muerte derecha = 2
+
+        parado izquierda = 3
+        correr izquierda = 4
+        muerte izquierda = 5
+
+        """
+
+    def update(self):
+        # Define el movimiento
+        self.movimiento()
+        # Animar el sprite
+        self.animarSprite()
+        pass
+
+    def movimiento(self):
+        self.rect.x += self.velx
+        self.rect.y += self.vely
+        pass
+
+    def animarSprite(self):
+        self.image = self.listaSprites[self.accion][self.frame]
+        if self.contadorAnimacion % 4 == 0:
+            if self.frame < self.numeroFrames - 1:
+                self.frame += 1
+            else:
+                self.frame = 0
+            pass
+
+    # Definir movimientos
+    def izquierda(self):
+        self.accion = 4
+        self.velx = -10
+        pass
+
+    def derecha(self):
+        self.accion = 1
+        self.velx = 10
+        pass
+
+    def idle(self):
+        self.velx = 0
+        self.vely = 0
+        if self.accion <= 2:
+            self.accion = 0
+        else:
+            self.accion = 3
+        pass
+    
