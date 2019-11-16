@@ -188,16 +188,6 @@ def main():
         jugadores.draw(pantalla)
         objetos.draw(pantalla)
 
-        """
-        # Contador para el retraso de la animacion
-        if jugador.contadorAnimacion < 28:
-            jugador.contadorAnimacion+=1
-            enemigo.contadorAnimacion+=1
-        else:
-            jugador.contadorAnimacion = 1
-            enemigo.contadorAnimacion = 1
-        """
-
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)
