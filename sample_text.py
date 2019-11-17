@@ -26,12 +26,12 @@ def main():
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
     generadores = pygame.sprite.Group()
+    spawnMamas = pygame.sprite.Group()
     corazones = pygame.sprite.Group()
     jugadores = pygame.sprite.Group()
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
-    spawnMamas = pygame.sprite.Group()
 
     # variables ventanas
     finDeJuego = False
@@ -50,15 +50,8 @@ def main():
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugadores.add(jugador)
-        #Vidas Santiago
+    #Vidas Jugador
     vidas = jugador.vida
-
-    
-    """
-    # Sprites y clase enemigo
-    enemigo = e.Mama(listaSpritesMama)
-    enemigos.add(enemigo)
-    """
 
     # Sprites y clase objeto
     objetoScript = o.Objeto(listaSpritesObjeto[0][2],1)         # 1 - script
@@ -75,24 +68,19 @@ def main():
     #en la clase generadores(puertas) se producen las mamas
     numero_Puertas = random.randrange(1,5)
 
-    for i in range(numero_Puertas): # crea n rivales
+    # crea puertas (generadores de enemigos)
+    for i in range(numero_Puertas):
         puerta = ge.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
-
-
-
 
     # Sprites y clase imagen
     background = b.Imagen(spriteBackground,1)
     fondos.add(background)
 
-
     while True and (not finDeJuego):
-
         # definir vidas jugador
         if vidas < 1:
             finDeJuego = True
-            # TODO : BUSCAR SLEEP
 
         # Eventos
         for event in pygame.event.get():
@@ -237,7 +225,6 @@ def main():
                 if abs(ene.rect.left - i.rect.right) <= 10 or abs(ene.rect.right - i.rect.left) <= 10:
                     jugadores.remove(i)
                     vidas -= 1
-                    print ('te quedan ', vidas , 'Vidas')
                     jugador = pp.Jugador(listaSpritesSantiago)
                     jugadores.add(jugador)
                     jugador.idle()
@@ -268,13 +255,24 @@ def main():
         reloj.tick(FPS)
     
     # ---------------------------------------------------------------------------
-    # contenido fuera del ciclo
-    fuente = pygame.font.Font(None,38)
-    texto = 'FIN DEL JUEGO'
-    info = fuente.render(texto,True,[255,255,255])
-    pantalla.fill([0,0,0])
-    pantalla.blit(info,[ANCHO//2,ALTO//2])
-    pygame.display.flip()
+    # Ciclo de fin de juego
+
+    while True and (finDeJuego):
+
+        # Eventos
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+
+        # Texto de fin del juego
+        fuente = pygame.font.Font(None,38)
+        texto = 'FIN DEL JUEGO'
+        info = fuente.render(texto,True,[255,255,255])
+        pantalla.fill([0,0,0])
+        pantalla.blit(info,[ANCHO//2-100,ALTO//2])
+        pygame.display.flip()
+
+        
     
     pass
 # -------------------------------------------------------------------------------
