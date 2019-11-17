@@ -195,6 +195,9 @@ def main():
             if jugador.vida < NUMEROVIDAS:
                 if c.identificador == jugador.vida+1:
                     c.corazonInactivo()
+        
+        for bac in fondos:
+            pass
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         listaColisiones = pygame.sprite.spritecollide(jugador, objetos, False)
