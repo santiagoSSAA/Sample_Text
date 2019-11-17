@@ -230,10 +230,8 @@ def main():
                     vidas -= 1
                     print ('te quedan ', vidas , 'Vidas')
                     jugador = pp.Jugador(listaSpritesSantiago)
-                    print ('hotel? trivag')
                     jugadores.add(jugador)
                     jugador.idle()
-                    print ('jugador', len(jugadores))
                     jugador.vida = vidas
 
         # ----------------------------------------------------------------------------------------------------
