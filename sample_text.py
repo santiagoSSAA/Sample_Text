@@ -113,12 +113,10 @@ def main():
                         j.accion = 0
                     else:
                         j.accion = 4
-                
-
+            
             # Reconocer extremo a partir del cual se mueve el mapa
             if j.rect.right > LIMITE and j.accion in [1,3]:
                 j.rect.right = LIMITE
-                background.izquierda()
                 background.izquierda()
             elif background.rect.left < 0 and j.rect.right < LIMITEINFERIOR and j.accion in [5,6]:
                 j.rect.right = LIMITEINFERIOR
@@ -255,7 +253,8 @@ def main():
         fuente = pygame.font.Font(None,38)
         texto = 'FIN DEL JUEGO'
         info = fuente.render(texto,True,[255,255,255])
-        pantalla.fill([0,0,0])
+        fondos.update()
+        fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])
         pygame.display.flip()
 
