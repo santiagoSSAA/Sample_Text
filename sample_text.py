@@ -50,8 +50,6 @@ def main():
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugadores.add(jugador)
-    #Vidas Jugador
-    vidas = jugador.vida
 
     # Sprites y clase objeto
     objetoScript = o.Objeto(listaSpritesObjeto[0][2],1)         # 1 - script
@@ -79,7 +77,7 @@ def main():
 
     while True and (not finDeJuego):
         # definir vidas jugador
-        if vidas < 1:
+        if jugador.vida < 1:
             finDeJuego = True
 
         # Eventos
@@ -218,11 +216,11 @@ def main():
                     enemigos.remove(i)
       
         #Colisiones Enemigos contra el jugador
-        eliminacion = False
         for ene in enemigos:
-            ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, eliminacion)
+            ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
             for i in ColisionJugadorEnemigo:
                 if abs(ene.rect.left - i.rect.right) <= 10 or abs(ene.rect.right - i.rect.left) <= 10:
+                    vidas = jugador.vida
                     jugadores.remove(i)
                     vidas -= 1
                     jugador = pp.Jugador(listaSpritesSantiago)
