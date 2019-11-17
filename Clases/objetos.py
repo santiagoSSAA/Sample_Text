@@ -9,7 +9,7 @@ class Objeto(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
-        self.rect.x = random.randrange(30,1000)
+        self.rect.x = random.randrange(150,1000)
         self.rect.y = random.randrange(350,550)
         self.identificador = identificador
 

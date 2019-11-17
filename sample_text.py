@@ -9,6 +9,7 @@ import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
 import Clases.generadores as ge
+import Clases.corazones as cor
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -17,12 +18,16 @@ SUELO = 660
 LIMITE = 1150
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
+NUMEROVIDAS = 5
 # -------------------------------------------------------------------------------
 def main():
     pygame.init()
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
     reloj = pygame.time.Clock()
-    
+
+    # Texto de vidas
+    fuente = pygame.font.Font(None,24)
+    info = fuente.render("VIDAS",True,[0,0,0])
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
     generadores = pygame.sprite.Group()
@@ -49,17 +54,25 @@ def main():
 
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
+    jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
 
     # Sprites y clase objeto
-    objetoScript = o.Objeto(listaSpritesObjeto[0][2],1)         # 1 - script
-    objetoMusica= o.Objeto(listaSpritesObjeto[2][0],2)          # 2 - Musica
-    objetoPhoto = o.Objeto(listaSpritesObjeto[2][1],3)          # 3 - photoshop
-    objetoProgramacion = o.Objeto(listaSpritesObjeto[2][2],4)   # 4 - programacion
-    objetos.add(objetoScript)
-    objetos.add(objetoMusica)
-    objetos.add(objetoPhoto)
-    objetos.add(objetoProgramacion) 
+    for i in range(1,5):
+        objeto = None
+        if i  == 1:
+            objeto = o.Objeto(listaSpritesObjeto[0][2],i)
+        else:
+            objeto = o.Objeto(listaSpritesObjeto[2][i-2],i)
+        objetos.add(objeto)
+    
+    # Sprites y clase corazones
+    numero_Corazones = jugador.vida
+    for i in range(1,numero_Corazones+1):
+        c = cor.Corazon(listaSpritesObjeto,i)
+        corazones.add(c)
+        c.rect.x = 10 + (35*i)
+
 
     # crea puertas (generadores de enemigos)
     numero_Puertas = random.randrange(1,5)
@@ -176,23 +189,18 @@ def main():
             
             # Sincronizar el movimiento de los generadores con el del entorno
             g.velx = background.velx
-            
+        
+        for c in corazones:
+            # Desaparicion de vidas
+            if jugador.vida < NUMEROVIDAS:
+                if c.identificador == jugador.vida+1:
+                    c.corazonInactivo()
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         listaColisiones = pygame.sprite.spritecollide(jugador, objetos, False)
         if len(listaColisiones) > 0:
-            if listaColisiones[0].identificador == 1:
-                listaColisiones[0].rect.x = 300
-                listaColisiones[0].rect.y = 30
-            elif listaColisiones[0].identificador == 2:
-                listaColisiones[0].rect.x = 350
-                listaColisiones[0].rect.y = 30
-            elif listaColisiones[0].identificador == 3:
-                listaColisiones[0].rect.x = 400
-                listaColisiones[0].rect.y = 30
-            elif listaColisiones[0].identificador == 4:
-                listaColisiones[0].rect.x = 450
-                listaColisiones[0].rect.y = 30
+            listaColisiones[0].rect.x = 300 + (50*(listaColisiones[0].identificador))
+            listaColisiones[0].rect.y = 30
             jugador.objetosObtenidos.append(listaColisiones[0].identificador)
 
         #Colisiones jugador a Enemigos
@@ -223,10 +231,9 @@ def main():
         objetos.update()
         generadores.update()
         spawnMamas.update()
-        
+        corazones.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
-        
         # Dibujar los objetos en la pantalla
         fondos.draw(pantalla)
         enemigos.draw(pantalla)
@@ -234,7 +241,8 @@ def main():
         objetos.draw(pantalla)
         generadores.draw(pantalla)
         spawnMamas.draw(pantalla)
-
+        corazones.draw(pantalla)
+        pantalla.blit(info,[55,20])
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)
