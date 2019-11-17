@@ -2,7 +2,6 @@ import pygame
 from pygame.locals import *
 import random
 
-VELOCIDAD = 1
 CANTIDADENEMIGOS = 5
 
 class Generador(pygame.sprite.Sprite):
@@ -28,12 +27,3 @@ class Generador(pygame.sprite.Sprite):
     def movimiento(self):
         self.rect.x += self.velx
         self.rect.y += self.vely
-    
-    def izquierda(self):
-        self.velx = -VELOCIDAD
-
-    def derecha(self):
-        self.velx = VELOCIDAD
-
-    def idle(self):
-        self.velx = 0
