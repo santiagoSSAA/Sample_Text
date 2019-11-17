@@ -56,17 +56,13 @@ def main():
     objetoMusica= o.Objeto(listaSpritesObjeto[2][0],2)          # 2 - Musica
     objetoPhoto = o.Objeto(listaSpritesObjeto[2][1],3)          # 3 - photoshop
     objetoProgramacion = o.Objeto(listaSpritesObjeto[2][2],4)   # 4 - programacion
-    #objetoPuerta = o.Objeto(listaSpritesObjeto[3][2],5)
     objetos.add(objetoScript)
     objetos.add(objetoMusica)
     objetos.add(objetoPhoto)
-    objetos.add(objetoProgramacion)
-
-    # Sprites y clase generadores
-    #en la clase generadores(puertas) se producen las mamas
-    numero_Puertas = random.randrange(1,5)
+    objetos.add(objetoProgramacion) 
 
     # crea puertas (generadores de enemigos)
+    numero_Puertas = random.randrange(1,5)
     for i in range(numero_Puertas):
         puerta = ge.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
@@ -76,7 +72,7 @@ def main():
     fondos.add(background)
 
     while True and (not finDeJuego):
-        # definir vidas jugador
+        # Analizar vidas restantes
         if jugador.vida < 1:
             finDeJuego = True
 
@@ -92,7 +88,7 @@ def main():
                 if event.key == pygame.K_LEFT:
                     jugador.izquierda()
                 if event.key == pygame.K_UP:
-                    if jugador.rect.bottom == SUELO + 1:
+                    if jugador.rect.bottom > SUELO:
                         jugador.salto()
             
             # Detener el personaje en caso de no oprimir nada
@@ -107,6 +103,17 @@ def main():
             if j.rect.bottom > SUELO:
                 j.rect.bottom = SUELO
                 j.vely = 0
+                # Definir posicion de idle o run al caer al suelo
+                if j.velx > 0:
+                    j.accion = 1
+                elif j.velx <0:
+                    j.accion = 5
+                else:
+                    if j.accion < 3:
+                        j.accion = 0
+                    else:
+                        j.accion = 4
+                
 
             # Reconocer extremo a partir del cual se mueve el mapa
             if j.rect.right > LIMITE and j.accion in [1,3]:
@@ -152,17 +159,9 @@ def main():
                 ene.contadorAnimacion = 1
 
         for ob in objetos:
-            if background.velx < 0 and ob.rect.y != 30:
-                ob.izquierda()
-            elif background.velx > 0 and ob.rect.y != 30:
-                ob.derecha()
-            elif background.velx == 0 and ob.rect.y != 30:
-                ob.idle()
-
-            # Calculo de velocidades objeto-entorno
-            if background.velx != 0 and ob.rect.y != 30:
-                ob.velx += background.velx
-            pass
+            # Sincronizar el movimiento de los objetos con el del fondo
+            if ob.rect.y != 30:
+                ob.velx = background.velx
 
         #Creador Spawns Mama
         for g in generadores:
@@ -177,18 +176,8 @@ def main():
                     g.salirSpown = False
                     g.temp = random.randrange(100,150)
             
-            if background.velx < 0:
-                g.izquierda()
-            elif background.velx > 0:
-                g.derecha()
-            else:
-                g.idle()
-
-            # calculo de las velocidades con el entorno
-            if background.velx != 0:
-                g.velx += background.velx
-            else:
-                g.velx = 0
+            # Sincronizar el movimiento de los generadores con el del entorno
+            g.velx = background.velx
             
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos

@@ -2,8 +2,6 @@ import pygame
 from pygame.locals import *
 import random
 
-VELOCIDAD = 0
-
 class Objeto(pygame.sprite.Sprite):
     def __init__(self,image,identificador):
         pygame.sprite.Sprite.__init__(self)
@@ -25,12 +23,3 @@ class Objeto(pygame.sprite.Sprite):
     def movimiento(self):
         self.rect.x += self.velx
         self.rect.y += self.vely
-
-    def izquierda(self):
-        self.velx = -VELOCIDAD
-
-    def derecha(self):
-        self.velx = VELOCIDAD
-
-    def idle(self):
-        self.velx = 0
