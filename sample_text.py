@@ -31,8 +31,10 @@ def main():
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
-
     spawnMamas = pygame.sprite.Group()
+
+    # variables ventanas
+    finDeJuego = False
 
     # Cargar imagenes
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png").convert_alpha()
@@ -50,6 +52,7 @@ def main():
     jugadores.add(jugador)
         #Vidas Santiago
     vidas = jugador.vida
+
     
     """
     # Sprites y clase enemigo
@@ -84,7 +87,13 @@ def main():
     fondos.add(background)
 
 
-    while True:
+    while True and (not finDeJuego):
+
+        # definir vidas jugador
+        if vidas < 1:
+            finDeJuego = True
+            # TODO : BUSCAR SLEEP
+
         # Eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -257,6 +266,16 @@ def main():
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)
+    
+    # ---------------------------------------------------------------------------
+    # contenido fuera del ciclo
+    fuente = pygame.font.Font(None,38)
+    texto = 'FIN DEL JUEGO'
+    info = fuente.render(texto,True,[255,255,255])
+    pantalla.fill([0,0,0])
+    pantalla.blit(info,[ANCHO//2,ALTO//2])
+    pygame.display.flip()
+    
     pass
 # -------------------------------------------------------------------------------
 if __name__ == "__main__":
