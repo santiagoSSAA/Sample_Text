@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+VELOCIDAD = 12
+
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,listaSprites):
         pygame.sprite.Sprite.__init__(self)
@@ -14,8 +16,8 @@ class Jugador(pygame.sprite.Sprite):
         self.vely = 0
         # coordenadas de inicio
         self.rect = self.image.get_rect()
-        self.rect.x = 25
-        self.rect.y = 600
+        self.rect.x = 30
+        self.rect.bottom = 600
         self.numeroFrames = 4
         # contador
         self.contadorAnimacion = 0
@@ -23,7 +25,6 @@ class Jugador(pygame.sprite.Sprite):
         self.objetosObtenidos = []
         # puntos de vida
         self.vida = 3
-        
         """
         parado derecha = 0
         correr derecha = 1
@@ -63,12 +64,12 @@ class Jugador(pygame.sprite.Sprite):
     # Definir movimientos
     def izquierda(self):
         self.accion = 5
-        self.velx = -10
+        self.velx = -VELOCIDAD
         pass
 
     def derecha(self):
         self.accion = 1
-        self.velx = 10
+        self.velx = VELOCIDAD
         pass
 
     def idle(self):

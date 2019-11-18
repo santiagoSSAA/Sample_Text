@@ -72,4 +72,45 @@ class Mama(pygame.sprite.Sprite):
         else:
             self.accion = 3
         pass
-    
+
+# -------------------------------------------------------------------------------
+class Pereza(pygame.sprite.Sprite):
+    def __init__(self,listaSprites):
+        pygame.sprite.Sprite.__init__(self)
+        self.listaSprites = listaSprites
+        self.frame = 0
+        self.image = self.listaSprites[0][self.frame]
+        self.rect = self.image.get_rect()
+        self.velx = 0
+        self.vely = 0
+        # numero de frames
+        self.rect.x = 300
+        self.rect.y = 560
+        self.numeroFrames = 3
+        # contador
+        self.contadorAnimacion = 0
+
+    def update(self):
+        # Define el movimiento
+        self.movimiento()
+        # Animar el sprite
+        self.animarSprite()
+        pass
+
+    def movimiento(self):
+        self.rect.x += self.velx
+        self.rect.y += self.vely
+        pass
+
+    def animarSprite(self):
+        self.image = self.listaSprites[self.accion][self.frame]
+        if self.contadorAnimacion % 4 == 0:
+            if self.frame < self.numeroFrames - 1:
+                self.frame += 1
+            else:
+                self.frame = 0
+            pass
+
+    def idle(self):
+        self.velx = 0
+        self.vely = 0
