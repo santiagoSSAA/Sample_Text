@@ -4,12 +4,10 @@ from pygame.locals import *
 # -------------------------------------------------------------------------------
 import Libreria.libreriaFrames as lf
 # -------------------------------------------------------------------------------
-import Clases.Personaje_principal as pp
+import Clases.Personajes as pp
 import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
-import Clases.generadores as ge
-import Clases.corazones as cor
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -18,7 +16,7 @@ SUELO = 660
 LIMITE = 1150
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
-NUMEROVIDAS = 5
+NUMEROVIDAS = 7
 # -------------------------------------------------------------------------------
 def main():
     pygame.init()
@@ -45,7 +43,7 @@ def main():
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png").convert_alpha()
     spriteMama = pygame.image.load("Sprites/Sprite_Sheet_mama.png").convert_alpha()
     spriteObjetos = pygame.image.load("Sprites/Sprite_Sheet_Objetos.png").convert_alpha()
-    spriteBackground = pygame.image.load("Sprites/background.png").convert_alpha()
+    spriteBackground = pygame.image.load("Sprites/background.gif").convert_alpha()
 
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
@@ -69,15 +67,26 @@ def main():
     # Sprites y clase corazones
     numero_Corazones = jugador.vida
     for i in range(1,numero_Corazones+1):
-        c = cor.Corazon(listaSpritesObjeto,i)
+        c = o.Corazon(listaSpritesObjeto,i)
         corazones.add(c)
-        c.rect.x = 10 + (35*i)
+        if numero_Corazones <= 5:
+            c.rect.x = 10 + (35*i)
+        else:
+            if i <= 5:
+                c.rect.x = 10 + (35*i)
+            else:
+                if i%5 != 0:
+                    c.rect.x = 10 + (35*(i%5))
+                    c.rect.y = c.rect.y + (35*(i//5))
+                else:
+                    c.rect.x = 10 + (35*(5))
+                    c.rect.y = c.rect.y + (35*(i//5))
 
 
     # crea puertas (generadores de enemigos)
     numero_Puertas = random.randrange(1,5)
     for i in range(numero_Puertas):
-        puerta = ge.Generador(listaSpritesObjeto[3][2],5,SUELO)
+        puerta = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
 
     # Sprites y clase imagen
@@ -128,7 +137,7 @@ def main():
                         j.accion = 4
             
             # Reconocer extremo a partir del cual se mueve el mapa
-            if j.rect.right > LIMITE and j.accion in [1,3]:
+            if j.rect.right > LIMITE and background.rect.right > ANCHO and j.accion in [1,3]:
                 j.rect.right = LIMITE
                 background.izquierda()
             elif background.rect.left < 0 and j.rect.right < LIMITEINFERIOR and j.accion in [5,6]:
@@ -136,6 +145,8 @@ def main():
                 background.derecha()
             elif j.rect.left < 0:
                 j.rect.left = 0
+            elif j.rect.right > background.rect.right:
+                j.rect.right = background.rect.right
             else:
                 background.idle()
             # Aumentar el contador de animacion del jugador
@@ -145,6 +156,7 @@ def main():
                 j.contadorAnimacion = 1
 
         for ene in enemigos:
+            
             ene.idle()
             # Eleccion direccion movimiento mama
             if ene.direccion == 0:
@@ -173,7 +185,6 @@ def main():
             if ob.rect.y != 30:
                 ob.velx = background.velx
 
-        #Creador Spawns Mama
         for g in generadores:
             if len(enemigos) < (3*len(generadores)):
                 if g.temp == 0:
@@ -195,16 +206,13 @@ def main():
                 if c.identificador == jugador.vida+1:
                     c.corazonInactivo()
         
-        for bac in fondos:
-                        
-            pass
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
-        listaColisiones = pygame.sprite.spritecollide(jugador, objetos, False)
-        if len(listaColisiones) > 0:
-            listaColisiones[0].rect.x = 300 + (50*(listaColisiones[0].identificador))
-            listaColisiones[0].rect.y = 30
-            jugador.objetosObtenidos.append(listaColisiones[0].identificador)
+        ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
+        if len(ColisionesObjetos) > 0:
+            ColisionesObjetos[0].rect.x = 300 + (50*(ColisionesObjetos[0].identificador))
+            ColisionesObjetos[0].rect.y = 30
+            jugador.objetosObtenidos.append(ColisionesObjetos[0].identificador)
 
         #Colisiones jugador a Enemigos
         for ene in enemigos:
@@ -225,6 +233,12 @@ def main():
                     jugadores.add(jugador)
                     jugador.vida = vidas
 
+        # Colisiones Jugador con generadores
+        for g in generadores:
+            ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadores, False)
+            for i in ColisionesGeneradores:
+                if abs(jugador.rect.bottom - i.rect.top) <= 5 and jugador.vely > 0 :
+                    generadores.remove(i)
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
@@ -251,7 +265,6 @@ def main():
     
     # ---------------------------------------------------------------------------
     # Ciclo de fin de juego
-
     while True and (finDeJuego):
 
         # Eventos
@@ -259,10 +272,14 @@ def main():
             if event.type == pygame.QUIT:
                 return
 
+        # Manejo de las teclas
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_x:
+                finDeJuego = False
+
         # Texto de fin del juego
         fuente = pygame.font.Font(None,38)
-        texto = 'FIN DEL JUEGO'
-        info = fuente.render(texto,True,[255,255,255])
+        info = fuente.render('FIN DEL JUEGO',True,[255,255,255])
         fondos.update()
         fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])
