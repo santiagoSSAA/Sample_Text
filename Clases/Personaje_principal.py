@@ -15,7 +15,7 @@ class Jugador(pygame.sprite.Sprite):
         # coordenadas de inicio
         self.rect = self.image.get_rect()
         self.rect.x = 25
-        self.rect.y = 600
+        self.rect.bottom = 600
         self.numeroFrames = 4
         # contador
         self.contadorAnimacion = 0
@@ -23,7 +23,6 @@ class Jugador(pygame.sprite.Sprite):
         self.objetosObtenidos = []
         # puntos de vida
         self.vida = 3
-        
         """
         parado derecha = 0
         correr derecha = 1

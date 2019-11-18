@@ -138,7 +138,6 @@ def main():
                 j.rect.left = 0
             else:
                 background.idle()
-            
             # Aumentar el contador de animacion del jugador
             if j.contadorAnimacion < FPS:
                 j.contadorAnimacion += 1
@@ -197,6 +196,7 @@ def main():
                     c.corazonInactivo()
         
         for bac in fondos:
+                        
             pass
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
@@ -223,7 +223,6 @@ def main():
                     vidas -= 1
                     jugador = pp.Jugador(listaSpritesSantiago)
                     jugadores.add(jugador)
-                    jugador.idle()
                     jugador.vida = vidas
 
         # ----------------------------------------------------------------------------------------------------
@@ -268,8 +267,6 @@ def main():
         fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])
         pygame.display.flip()
-
-        
     
     pass
 # -------------------------------------------------------------------------------
