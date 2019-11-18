@@ -84,7 +84,7 @@ def main():
 
 
     # crea puertas (generadores de enemigos)
-    numero_Puertas = random.randrange(1,5)
+    numero_Puertas = random.randrange(2,5)
     for i in range(numero_Puertas):
         puerta = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
@@ -216,14 +216,14 @@ def main():
             ColisionesObjetos[0].rect.y = 30
             jugador.objetosObtenidos.append(ColisionesObjetos[0].identificador)
 
-        #Colisiones jugador a Enemigos
+        # Colisiones jugador a Enemigos
         for ene in enemigos:
             ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
             for i in ColisionesEnemigos:
-                if abs(jugador.rect.bottom - i.rect.top) <= 5 and jugador.vely > 0 :
+                if abs(jugador.rect.bottom - i.rect.top) <= 7 and jugador.vely > 0 :
                     enemigos.remove(i)
       
-        #Colisiones Enemigos contra el jugador
+        # Colisiones Enemigos contra el jugador
         for ene in enemigos:
             ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
             for i in ColisionJugadorEnemigo:
@@ -234,12 +234,23 @@ def main():
                     jugador = pp.Jugador(listaSpritesSantiago)
                     jugadores.add(jugador)
                     jugador.vida = vidas
-
+        
+        # Colisiones entre enemigos
+        rangoDeChoque = 10
+        for ene in enemigos:
+            ColisionEntreEnemigos = pygame.sprite.spritecollide(ene, enemigos, False)
+            for i in ColisionEntreEnemigos:
+                if abs(ene.rect.left - i.rect.right) <= rangoDeChoque:
+                    i.direccion = 1
+                    ene.direccion = 0
+                if abs(ene.rect.right - i.rect.left) <= rangoDeChoque:
+                    i.direccion = 0
+                    ene.direccion = 1
         # Colisiones Jugador con generadores
         for g in generadores:
             ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadores, False)
             for i in ColisionesGeneradores:
-                if abs(jugador.rect.bottom - i.rect.top) <= 5 and jugador.vely > 0 :
+                if abs(jugador.rect.bottom - i.rect.top) <=10 and jugador.vely > 0 :
                     generadores.remove(i)
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
