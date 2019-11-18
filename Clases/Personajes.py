@@ -42,7 +42,7 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         
         # calcula la gravedad
-        self.calcularGravedad()
+        self.calcularGravedad(1.8)
         # Define el movimiento
         self.movimiento()
         # Animar el sprite
@@ -91,9 +91,9 @@ class Jugador(pygame.sprite.Sprite):
         
         self.vely = -23
 
-    def calcularGravedad(self):
+    def calcularGravedad(self,gravedad):
         if self.vely == 0:
             self.vely = 1
         else:
-            self.vely += 1.55
+            self.vely += gravedad
         pass

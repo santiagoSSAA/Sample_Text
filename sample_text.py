@@ -184,6 +184,8 @@ def main():
             # Sincronizar el movimiento de los objetos con el del fondo
             if ob.rect.y != 30:
                 ob.velx = background.velx
+            else:
+                ob.velx = 0
 
         for g in generadores:
             if len(enemigos) < (3*len(generadores)):
