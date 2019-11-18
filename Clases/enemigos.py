@@ -2,6 +2,8 @@ import pygame
 from pygame.locals import *
 import random
 
+VELOCIDAD = 4
+
 class Mama(pygame.sprite.Sprite):
     def __init__(self,listaSprites):
         pygame.sprite.Sprite.__init__(self)
@@ -14,6 +16,10 @@ class Mama(pygame.sprite.Sprite):
         self.vely = 0
         # direccion
         self.direccion = random.randrange(2)
+        """
+        0 = derecha
+        1 = izquierda
+        """
         # numero de frames
         self.rect.x = 300
         self.rect.y = 560
@@ -56,12 +62,12 @@ class Mama(pygame.sprite.Sprite):
     # Definir movimientos
     def izquierda(self):
         self.accion = 4
-        self.velx = -10
+        self.velx = -VELOCIDAD
         pass
 
     def derecha(self):
         self.accion = 1
-        self.velx = 10
+        self.velx = VELOCIDAD
         pass
 
     def idle(self):
