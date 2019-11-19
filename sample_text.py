@@ -13,7 +13,7 @@ import random
 ANCHO = 1280
 ALTO = 720
 SUELO = 660
-LIMITE = 1150
+LIMITE = ANCHO - 130
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
 NUMEROVIDAS = 7
@@ -31,7 +31,7 @@ def main():
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
     generadores = pygame.sprite.Group()
-    spawnMamas = pygame.sprite.Group()
+    proyectiles = pygame.sprite.Group()
     corazones = pygame.sprite.Group()
     jugadores = pygame.sprite.Group()
     enemigos = pygame.sprite.Group()
@@ -101,7 +101,6 @@ def main():
         # Logica del tiempo
         if contadorTiempo < rapidez:
             contadorTiempo +=1
-            print(temporizador,rapidez)
         else:
             temporizador -= 1
             contadorTiempo = 1
@@ -308,7 +307,6 @@ def main():
         enemigos.update()
         objetos.update()
         generadores.update()
-        spawnMamas.update()
         corazones.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
@@ -318,7 +316,6 @@ def main():
         jugadores.draw(pantalla)
         objetos.draw(pantalla)
         generadores.draw(pantalla)
-        spawnMamas.draw(pantalla)
         corazones.draw(pantalla)
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])

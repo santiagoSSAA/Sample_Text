@@ -128,3 +128,46 @@ class Pereza(pygame.sprite.Sprite):
         self.velx = 0
         self.vely = 0
 # -------------------------------------------------------------------------------
+VELOCIDADPROYECTIL = 11
+class Chancla(pygame.sprite.Sprite):
+    def __init__(self,listaSprites):
+        pygame.sprite.Sprite.__init__(self)
+        self.listaSprites = listaSprites
+        self.frame = 0
+        self.image = self.listaSprites[0][self.frame]
+        # velocidades
+        self.velx = 0
+        self.vely = 0
+        # coordenadas de inicio
+        self.rect = self.image.get_rect()
+        self.numeroFrames = 4
+        # contador
+        self.contadorAnimacion = 0
+
+    def update(self):
+        # Define el movimiento
+        self.movimiento()
+        # Animar el sprite
+        self.animarSprite()
+
+    def movimiento(self):
+        self.rect.x += self.velx
+        self.rect.y += self.vely
+    
+    def animarSprite(self):
+        self.image = self.listaSprites[self.accion][self.frame]
+        if self.contadorAnimacion % 4 == 0:
+            if self.frame < self.numeroFrames - 1:
+                self.frame += 1
+            else:
+                self.frame = 0
+            pass
+    
+    # Definir movimientos
+    def izquierda(self):
+        self.velx = -VELOCIDADPROYECTIL
+        pass
+
+    def derecha(self):
+        self.velx = VELOCIDADPROYECTIL
+        pass
