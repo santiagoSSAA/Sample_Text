@@ -14,6 +14,8 @@ class Mama(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
+        # tipo
+        self.tipo = "mama"
         # direccion
         self.direccion = random.randrange(2)
         """
@@ -21,8 +23,8 @@ class Mama(pygame.sprite.Sprite):
         1 = izquierda
         """
         # numero de frames
-        self.rect.x = 300
-        self.rect.y = 560
+        self.rect.x = 0
+        self.rect.y = 0
         self.numeroFrames = 4
         # contador
         self.contadorAnimacion = 0
@@ -89,8 +91,10 @@ class Pereza(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
+        # tipo
+        self.tipo = "pereza"
         # numero de frames
-        self.rect.x = 300
+        self.rect.x = random.randrange(300,1200)
         self.rect.y = 560
         self.numeroFrames = 3
         # contador
@@ -109,8 +113,8 @@ class Pereza(pygame.sprite.Sprite):
         pass
 
     def animarSprite(self):
-        self.image = self.listaSprites[self.accion][self.frame]
-        if self.contadorAnimacion % 4 == 0:
+        self.image = self.listaSprites[0][self.frame]
+        if self.contadorAnimacion % 10 == 0:
             if self.frame < self.numeroFrames - 1:
                 self.frame += 1
             else:

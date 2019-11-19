@@ -38,7 +38,7 @@ class Generador(pygame.sprite.Sprite):
         self.rect.y = suelo - 50
         self.identificador = identificador
         self.cantidadEnemigos = CANTIDADENEMIGOS
-        self.salirSpown = False
+        self.salirSpawn = False
         #esto es el temporizador del generador
         self.temp = random.randrange(100,150)
     

@@ -44,18 +44,19 @@ def main():
     spriteMama = pygame.image.load("Sprites/Sprite_Sheet_mama.png").convert_alpha()
     spriteObjetos = pygame.image.load("Sprites/Sprite_Sheet_Objetos.png").convert_alpha()
     spriteBackground = pygame.image.load("Sprites/background.gif").convert_alpha()
+    spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png").convert_alpha()
 
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
     listaSpritesObjeto = lf.recortarSprite(pantalla,spriteObjetos,3,4)
     listaSpritesMama = lf.recortarSprite(pantalla,spriteMama,4,6)
-
+    listaSpritesPereza = lf.recortarSprite(pantalla,spritePereza,3,1)
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
 
-    # Sprites y clase objeto
+    # Sprites y clase Objetos
     for i in range(1,5):
         objeto = None
         if i  == 1:
@@ -64,7 +65,7 @@ def main():
             objeto = o.Objeto(listaSpritesObjeto[2][i-2],i)
         objetos.add(objeto)
     
-    # Sprites y clase corazones
+    # Sprites y clase Corazones
     numero_Corazones = jugador.vida
     for i in range(1,numero_Corazones+1):
         c = o.Corazon(listaSpritesObjeto,i)
@@ -157,28 +158,38 @@ def main():
 
         for ene in enemigos:
             
-            ene.idle()
-            # Eleccion direccion movimiento mama
-            if ene.direccion == 0:
-                ene.derecha()
-            elif ene.direccion == 1:
-                ene.izquierda()
-            
-            # Movimiento mama (definir los limites de movimiento en la mama)
-            if ene.rect.right >= background.rect.right:
-                ene.direccion = 1
-            elif ene.rect.left <= 180:
-                ene.direccion = 0
-            
-            # Calculo de velocidades mama-entorno
-            if background.velx != 0:
-                ene.velx += background.velx
-            
-            # Aumentar el contador de animacion del enemigo
-            if ene.contadorAnimacion < FPS:
-                ene.contadorAnimacion += 1
-            else:
-                ene.contadorAnimacion = 1
+            # Acciones para la mama
+            if ene.tipo == "mama":
+                ene.idle()
+                # Eleccion direccion movimiento mama
+                if ene.direccion == 0:
+                    ene.derecha()
+                elif ene.direccion == 1:
+                    ene.izquierda()
+                
+                # Movimiento mama (definir los limites de movimiento en la mama)
+                if ene.rect.right >= background.rect.right:
+                    ene.direccion = 1
+                elif ene.rect.left <= 180:
+                    ene.direccion = 0
+                
+                # Calculo de velocidades mama-entorno
+                if background.velx != 0:
+                    ene.velx += background.velx
+                
+                # Aumentar el contador de animacion del enemigo
+                if ene.contadorAnimacion < FPS:
+                    ene.contadorAnimacion += 1
+                else:
+                    ene.contadorAnimacion = 1
+                pass
+            elif ene.tipo == "pereza":
+                # Aumentar el contador de animacion del enemigo
+                if ene.contadorAnimacion < FPS:
+                    ene.contadorAnimacion += 1
+                else:
+                    ene.contadorAnimacion = 1
+                pass
 
         for ob in objetos:
             # Sincronizar el movimiento de los objetos con el del fondo
@@ -188,16 +199,26 @@ def main():
                 ob.velx = 0
 
         for g in generadores:
+            # Generar mamas
             if len(enemigos) < (3*len(generadores)):
                 if g.temp == 0:
-                    g.salirSpown = True
-                if g.salirSpown:
-                    spMama = e.Mama(listaSpritesMama)
-                    spMama.rect.x = g.rect.x               
-                    spMama.rect.bottom =g.rect.bottom
-                    enemigos.add(spMama)
-                    g.salirSpown = False
-                    g.temp = random.randrange(100,150)
+                    g.salirSpawn = True
+                if g.salirSpawn:
+                    selectorEnemigo = random.randrange(1,3)
+                    if selectorEnemigo == 1:
+                        mama = e.Mama(listaSpritesMama)
+                        mama.rect.x = g.rect.x               
+                        mama.rect.bottom =g.rect.bottom
+                        enemigos.add(mama)
+                        g.salirSpawn = False
+                        g.temp = random.randrange(100,150)
+                    elif selectorEnemigo == 2:
+                        pereza = e.Pereza(listaSpritesPereza)
+                        pereza.rect.x = g.rect.x + random.randrange(-50,51)
+                        pereza.rect.bottom = g.rect.bottom
+                        enemigos.add(pereza)
+                        g.salirSpawn = False
+                        g.temp = random.randrange(100,150)
             
             # Sincronizar el movimiento de los generadores con el del entorno
             g.velx = background.velx
@@ -225,27 +246,33 @@ def main():
       
         # Colisiones Enemigos contra el jugador
         for ene in enemigos:
+            rangoChoque = 10
+            if ene.tipo == "pereza":
+                rangoChoque = 2
             ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
             for i in ColisionJugadorEnemigo:
-                if abs(ene.rect.left - i.rect.right) <= 10 or abs(ene.rect.right - i.rect.left) <= 10:
+                if abs(ene.rect.left - i.rect.right) <= rangoChoque or abs(ene.rect.right - i.rect.left) <= rangoChoque:
                     vidas = jugador.vida
                     jugadores.remove(i)
                     vidas -= 1
                     jugador = pp.Jugador(listaSpritesSantiago)
-                    jugadores.add(jugador)
                     jugador.vida = vidas
-        
+                    jugadores.add(jugador)
+    
         # Colisiones entre enemigos
         rangoDeChoque = 10
         for ene in enemigos:
-            ColisionEntreEnemigos = pygame.sprite.spritecollide(ene, enemigos, False)
-            for i in ColisionEntreEnemigos:
-                if abs(ene.rect.left - i.rect.right) <= rangoDeChoque:
-                    i.direccion = 1
-                    ene.direccion = 0
-                if abs(ene.rect.right - i.rect.left) <= rangoDeChoque:
-                    i.direccion = 0
-                    ene.direccion = 1
+            if ene.tipo == "mama":
+                ColisionEntreEnemigos = pygame.sprite.spritecollide(ene, enemigos, False)
+                for i in ColisionEntreEnemigos:
+                    if abs(ene.rect.left - i.rect.right) <= rangoDeChoque:
+                        i.direccion = 1
+                        ene.direccion = 0
+                    if abs(ene.rect.right - i.rect.left) <= rangoDeChoque:
+                        i.direccion = 0
+                        ene.direccion = 1
+                pass
+
         # Colisiones Jugador con generadores
         for g in generadores:
             ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadores, False)
