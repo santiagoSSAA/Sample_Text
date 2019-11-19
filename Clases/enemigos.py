@@ -99,12 +99,15 @@ class Pereza(pygame.sprite.Sprite):
         self.numeroFrames = 3
         # contador
         self.contadorAnimacion = 0
+        # tiempo de vida
+        self.vida = random.randrange(100,301)
 
     def update(self):
         # Define el movimiento
         self.movimiento()
         # Animar el sprite
         self.animarSprite()
+        self.vida -=1
         pass
 
     def movimiento(self):

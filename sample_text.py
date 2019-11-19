@@ -22,10 +22,12 @@ def main():
     pygame.init()
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
     reloj = pygame.time.Clock()
-
+    temporizador = 300
+    rapidez = FPS
     # Texto de vidas
     fuente = pygame.font.Font(None,24)
     info = fuente.render("VIDAS",True,[0,0,0])
+    contadorTiempo = 1
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
     generadores = pygame.sprite.Group()
@@ -95,6 +97,26 @@ def main():
     fondos.add(background)
 
     while True and (not finDeJuego):
+
+        # Logica del tiempo
+        if contadorTiempo < rapidez:
+            contadorTiempo +=1
+            print(temporizador,rapidez)
+        else:
+            temporizador -= 1
+            contadorTiempo = 1
+
+        # Logica del temporizador
+        if temporizador < 90:
+            rapidez = FPS // 3
+        
+        if temporizador <= 0:
+            finDeJuego = True
+
+        # Crea el temporizador
+        fuenteTemporizador = pygame.font.Font(None,36)
+        tempoInfo = fuenteTemporizador.render(("Tiempo: "+ str(temporizador)),True,[0,0,0])
+
         # Analizar vidas restantes
         if jugador.vida < 1:
             finDeJuego = True
@@ -191,6 +213,14 @@ def main():
                     ene.contadorAnimacion = 1
                 pass
 
+                # Calculo de velocidades pereza-entorno
+                if background.velx != 0:
+                    ene.velx += background.velx
+
+            # Acciones para pereza
+            if ene.tipo == "pereza":
+                if ene.vida == 0:
+                    enemigos.remove(ene)
         for ob in objetos:
             # Sincronizar el movimiento de los objetos con el del fondo
             if ob.rect.y != 30:
@@ -206,19 +236,15 @@ def main():
                 if g.salirSpawn:
                     selectorEnemigo = random.randrange(1,3)
                     if selectorEnemigo == 1:
-                        mama = e.Mama(listaSpritesMama)
-                        mama.rect.x = g.rect.x               
-                        mama.rect.bottom =g.rect.bottom
-                        enemigos.add(mama)
-                        g.salirSpawn = False
-                        g.temp = random.randrange(100,150)
+                        enemigo = e.Mama(listaSpritesMama)
+                        enemigo.rect.x = g.rect.x               
+                        enemigo.rect.bottom =g.rect.bottom
                     elif selectorEnemigo == 2:
-                        pereza = e.Pereza(listaSpritesPereza)
-                        pereza.rect.x = g.rect.x + random.randrange(-50,51)
-                        pereza.rect.bottom = g.rect.bottom
-                        enemigos.add(pereza)
-                        g.salirSpawn = False
-                        g.temp = random.randrange(100,150)
+                        enemigo = e.Pereza(listaSpritesPereza)
+                        enemigo.rect.x = g.rect.x + random.randrange(-50,51)
+                        enemigo.rect.bottom = g.rect.bottom
+                    enemigos.add(enemigo)
+                    g.salirSpawn = False
             
             # Sincronizar el movimiento de los generadores con el del entorno
             g.velx = background.velx
@@ -238,20 +264,17 @@ def main():
             jugador.objetosObtenidos.append(ColisionesObjetos[0].identificador)
 
         # Colisiones jugador a Enemigos
-        for ene in enemigos:
-            ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
-            for i in ColisionesEnemigos:
-                if abs(jugador.rect.bottom - i.rect.top) <= 7 and jugador.vely > 0 :
-                    enemigos.remove(i)
+        ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
+        for i in ColisionesEnemigos:
+            if i.tipo != "pereza" and abs(jugador.rect.bottom - i.rect.top) <= 7 and jugador.vely > 0 :
+                enemigos.remove(i)
       
-        # Colisiones Enemigos contra el jugador
+        # Colisiones Enemigo contra jugadores
         for ene in enemigos:
-            rangoChoque = 10
-            if ene.tipo == "pereza":
-                rangoChoque = 2
+            rangoChoque = 50
             ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
             for i in ColisionJugadorEnemigo:
-                if abs(ene.rect.left - i.rect.right) <= rangoChoque or abs(ene.rect.right - i.rect.left) <= rangoChoque:
+                if i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
                     vidas = jugador.vida
                     jugadores.remove(i)
                     vidas -= 1
@@ -265,10 +288,10 @@ def main():
             if ene.tipo == "mama":
                 ColisionEntreEnemigos = pygame.sprite.spritecollide(ene, enemigos, False)
                 for i in ColisionEntreEnemigos:
-                    if abs(ene.rect.left - i.rect.right) <= rangoDeChoque:
+                    if i.tipo != "pereza" and abs(ene.rect.left - i.rect.right) <= rangoDeChoque:
                         i.direccion = 1
                         ene.direccion = 0
-                    if abs(ene.rect.right - i.rect.left) <= rangoDeChoque:
+                    if i.tipo != "pereza" and abs(ene.rect.right - i.rect.left) <= rangoDeChoque:
                         i.direccion = 0
                         ene.direccion = 1
                 pass
@@ -299,6 +322,7 @@ def main():
         spawnMamas.draw(pantalla)
         corazones.draw(pantalla)
         pantalla.blit(info,[55,20])
+        pantalla.blit(tempoInfo,[ANCHO - 180,25])
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)

@@ -45,7 +45,10 @@ class Generador(pygame.sprite.Sprite):
     def update(self):
         # define movimiento
         self.movimiento()
-        self.temp -= 1
+        if self.temp >= 0:
+            self.temp -= 1
+        else:
+            self.temp = random.randrange(100,150)
 
     def movimiento(self):
         self.rect.x += self.velx
