@@ -214,8 +214,7 @@ def main():
                 pass
 
                 # Calculo de velocidades pereza-entorno
-                if background.velx != 0:
-                    ene.velx += background.velx
+                ene.velx = background.velx
 
             # Acciones para pereza
             if ene.tipo == "pereza":

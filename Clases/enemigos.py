@@ -127,3 +127,4 @@ class Pereza(pygame.sprite.Sprite):
     def idle(self):
         self.velx = 0
         self.vely = 0
+# -------------------------------------------------------------------------------
