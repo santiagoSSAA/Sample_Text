@@ -32,12 +32,9 @@ class Jugador(pygame.sprite.Sprite):
         self.objetosObtenidos = []
         # puntos de vida
         self.vida = 3
-<<<<<<< HEAD:Clases/Personaje_principal.py
         #esto nos sirve para implementar los demas niveles
         self.nivel = None
         
-=======
->>>>>>> Balas_Enemigos:Clases/Personajes.py
         """
         parado derecha = 0
         correr derecha = 1
@@ -56,11 +53,12 @@ class Jugador(pygame.sprite.Sprite):
         self.tiempoSpeed = 0
 
     def update(self):
-        # calcula la gravedad
-<<<<<<< HEAD:Clases/Personaje_principal.py
-        self.calcularGravedad()
+        self.calcularGravedad(1.8)
+        # Define el movimiento
+        self.movimiento()
+        # Animar el sprite
+        self.animarSprite()
 
-        self.rect.x += self.velx
         
         # Comprobamos si hemos chocado contra algo
         lista_impactos_bloques = pygame.sprite.spritecollide(self, self.nivel.listade_plataformas, False)
@@ -96,15 +94,6 @@ class Jugador(pygame.sprite.Sprite):
 
 
         # TODO: falta corregir el hecho de que si salta desde una plataforma y su cabeza choca con otra, cuando toque la plataforma vuelva a su posicion original
-
-
-=======
-        self.calcularGravedad(1.8)
-        # Define el movimiento
-        self.movimiento()
->>>>>>> Balas_Enemigos:Clases/Personajes.py
-        # Animar el sprite
-        self.animarSprite()
         
         # activar/desactivar stun
         if self.tiempoStun > 0:
@@ -188,7 +177,6 @@ class Jugador(pygame.sprite.Sprite):
         elif self.accion > 3:
             self.accion = 6
 
-<<<<<<< HEAD:Clases/Personaje_principal.py
     def salto_plataforma(self):
         """ Llamado cuando el usuario pulsa el boton de 'saltar'. """
 
@@ -203,22 +191,12 @@ class Jugador(pygame.sprite.Sprite):
         if len(lista_impactos_plataforma) > 0 or self.rect.bottom >= SUELO:
             self.salto()
         
-
-
-    def calcularGravedad(self):
-        if self.vely == 0:
-            self.vely = 1
-        else:
-            self.vely += 1.55
-        pass
-
         '''
         #Observamos si nos encontramos sobre el suelo.
         if self.rect.y >= SUELO - self.rect.height and self.vely >= 0:
             self.vely = 0
             self.rect.y = SUELO - self.rect.height
         '''
-=======
         if self.tiempoSlow > 0:
             self.vely = self.vely //2
         elif self.tiempoStun > 0:
@@ -249,4 +227,3 @@ class Jugador(pygame.sprite.Sprite):
         else:
             self.vely += gravedad
         pass
->>>>>>> Balas_Enemigos:Clases/Personajes.py

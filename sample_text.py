@@ -8,14 +8,9 @@ import Clases.Personajes as pp
 import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
-<<<<<<< HEAD
-import Clases.generadores as ge
-import Clases.corazones as cor
 import Clases.Nivel as n
 #---------------------------
 import Clases.Plataforma as pl
-=======
->>>>>>> Balas_Enemigos
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -24,7 +19,6 @@ SUELO = 660
 LIMITE = ANCHO - 130
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
-<<<<<<< HEAD
 NUMEROVIDAS = 5
 # Colores (van implementando la splataformas, despues pueden ser eliminados)
 NEGRO = (0, 0, 0)
@@ -88,22 +82,14 @@ class Nivel_01(Nivel):
             self.listade_plataformas.add(bloque)
 
 
-=======
-NUMEROVIDAS = 3
->>>>>>> Balas_Enemigos
 # -------------------------------------------------------------------------------
 def main():
     pygame.init()
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
     pygame.display.set_caption("Nivel 1 :v")
     reloj = pygame.time.Clock()
-<<<<<<< HEAD
-
-
-=======
     temporizador = 300
     rapidez = FPS
->>>>>>> Balas_Enemigos
     # Texto de vidas
     fuente = pygame.font.Font(None,24)
     info = fuente.render("VIDAS",True,[0,0,0])
@@ -141,7 +127,6 @@ def main():
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
 
-<<<<<<< HEAD
     # Creamos todos los niveles
     listade_niveles = []
     listade_niveles.append(Nivel_01(jugador))
@@ -154,9 +139,7 @@ def main():
 
 
     # Sprites y clase objeto
-=======
     # Sprites y clase Objetos
->>>>>>> Balas_Enemigos
     for i in range(1,5):
         objeto = None
         if i  == 1:
@@ -242,6 +225,7 @@ def main():
                     jugador.izquierda()
                 if event.key == pygame.K_UP:
                     if jugador.rect.bottom > SUELO or jugador.salto_plataforma():
+                        print(jugador.rect.bottom)
                         jugador.salto()
                     
             
@@ -354,12 +338,7 @@ def main():
                 ob.velx = 0
 
         for g in generadores:
-<<<<<<< HEAD
             if len(enemigos) < (0*len(generadores)):
-=======
-            # Generar mamas
-            if len(enemigos) < (3*len(generadores)):
->>>>>>> Balas_Enemigos
                 if g.temp == 0:
                     g.salirSpawn = True
                 if g.salirSpawn:
@@ -431,11 +410,6 @@ def main():
                 # actualizar el movimiento del jugador con el efecto incluido
                 if jugador.accion == 0:
                     jugador.idle()
-<<<<<<< HEAD
-                    jugador.vida = vidas
-    
-        
-=======
                 elif jugador.accion <= 3:
                     jugador.derecha()
                     if jugador.rect.y != 0:
@@ -487,7 +461,6 @@ def main():
             for i in ColisionesGeneradores:
                 if abs(jugador.rect.bottom - i.rect.top) <=10 and jugador.vely > 0 :
                     generadores.remove(i)
->>>>>>> Balas_Enemigos
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
@@ -496,13 +469,10 @@ def main():
         objetos.update()
         generadores.update()
         corazones.update()
-<<<<<<< HEAD
 
         nivel_actual.update()
         plataformas.update()
-=======
         proyectiles.update()
->>>>>>> Balas_Enemigos
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -512,15 +482,12 @@ def main():
         objetos.draw(pantalla)
         generadores.draw(pantalla)
         corazones.draw(pantalla)
-<<<<<<< HEAD
 
         plataformas.draw(pantalla)
         nivel_actual.draw(pantalla)
 
-=======
         proyectiles.draw(pantalla)
         # dibujar el texto
->>>>>>> Balas_Enemigos
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])
         # Refrescar la pantalla
@@ -553,13 +520,10 @@ def main():
         fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])
         pygame.display.flip()
-<<<<<<< HEAD
         pygame.quit()
 
 
         
-=======
->>>>>>> Balas_Enemigos
     
     pass
 # -------------------------------------------------------------------------------
