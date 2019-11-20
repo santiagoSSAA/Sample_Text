@@ -15,7 +15,7 @@ import random
 ANCHO = 1280
 ALTO = 750
 SUELO = ALTO - 100
-LIMITE = ANCHO - 130
+LIMITE = ANCHO //2
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
 NUMEROVIDAS = 3
@@ -300,11 +300,33 @@ def main():
                     chancla.rect.y = ene.rect.y
                         
                 # Movimiento mama (definir los limites de movimiento en la mama)
+                if ene.rect.bottom == SUELO:
+                    if ene.rect.right >= background.rect.right:
+                        ene.direccion = 1
+                    elif ene.rect.left <= 180:
+                        ene.direccion = 0
+
+                #TODO: revisar donde se generan las mamas y hacer que aparezcan un poquito mas abajo
+                #y ahi si hacer el codigo de las colisiones.
+
+                #o implemetar un atributo a la mama que guarde las plataformas y bla bla bla.
+
+                ColisionMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas, False)
+                for i in ColisionMamaPlataforma:
+                    print ("gonorreaa")
+                    if ene.rect.left >= i.rect.left:
+                        ene.direccion = 0   
+                    if ene.rect.right <= i.rect.right:
+                        ene.direccion = 1
+                    
+                '''
                 if ene.rect.right >= background.rect.right:
                     ene.direccion = 1
                 elif ene.rect.left <= 180:
                     ene.direccion = 0
-                
+                '''
+
+                    
                 # Calculo de velocidades mama-entorno
                 if background.velx != 0:
                     ene.velx += background.velx
@@ -349,6 +371,8 @@ def main():
                     enemigo.rect.bottom =g.rect.bottom
                     enemigos.add(enemigo) 
                     g.salirSpawn = False
+            # Sincronizar el movimiento de los generadores con el del entorno
+            g.velx = background.velx
 
         for g in generadoresPereza:
             #generar perezas
@@ -415,6 +439,7 @@ def main():
                     jugadores.add(jugador)
 
                 elif ene.tipo == "pereza":
+                    print("colision con pereza")
                     if jugador.tiempoSlow == 0:
                         jugador.tiempoSlow = 5
 
