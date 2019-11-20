@@ -392,6 +392,10 @@ def main():
             for i in ColisionesModificadores:
                 if jugador.tiempoSpeed == 0:
                     jugador.tiempoSpeed = 3
+                if temporizador + 10 <= 300:
+                    temporizador += 10
+                else:
+                    temporizador = 300
                 modificadores.remove(i)
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
