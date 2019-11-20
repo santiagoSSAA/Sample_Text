@@ -386,6 +386,13 @@ def main():
             for i in ColisionesGeneradores:
                 if abs(jugador.rect.bottom - i.rect.top) <=10 and jugador.vely > 0 :
                     generadores.remove(i)
+        
+        for mod in modificadores:
+            ColisionesModificadores = pygame.sprite.spritecollide(jugador, modificadores,False)
+            for i in ColisionesModificadores:
+                if jugador.tiempoSpeed == 0:
+                    jugador.tiempoSpeed = 3
+                modificadores.remove(i)
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
