@@ -8,12 +8,12 @@ import Clases.Personajes as pp
 import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
-import Clases.Plataforma as p
+import Clases.plataforma as p
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
-ALTO = 720
-SUELO = 660
+ALTO = 750
+SUELO = ALTO - 100
 LIMITE = ANCHO - 130
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
@@ -407,12 +407,13 @@ def main():
             ColisionesModificadores = pygame.sprite.spritecollide(jugador, modificadores,False)
             for i in ColisionesModificadores:
                 if jugador.tiempoSpeed == 0:
+                    jugador.tiempoSpeed = 2
                 if temporizador + 10 <= 300:
                     temporizador += 10
                 else:
                     temporizador = 300
                 modificadores.remove(i)
-        
+         
         # Colisiones jugador con plataformas
         ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
         # ----------------------------------------------------------------------------------------------------
