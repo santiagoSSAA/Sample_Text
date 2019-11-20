@@ -99,12 +99,20 @@ def main():
     fondos.add(background)
 
     while True and (not finDeJuego):
-
         # Logica del tiempo
         if contadorTiempo < rapidez:
             contadorTiempo +=1
         else:
             temporizador -= 1
+
+            # reducir los tiempos del efecto del jugador
+            if jugador.tiempoSlow > 0:
+                jugador.tiempoSlow -=1
+            elif jugador.tiempoStun > 0:
+                jugador.tiempoStun -= 1
+            elif jugador.tiempoSpeed > 0:
+                jugador.tiempoSpeed -= 1
+
             contadorTiempo = 1
 
         # Logica del temporizador
@@ -164,10 +172,10 @@ def main():
             # Reconocer extremo a partir del cual se mueve el mapa
             if j.rect.right > LIMITE and background.rect.right > ANCHO and j.accion in [1,3]:
                 j.rect.right = LIMITE
-                background.izquierda()
+                background.izquierda(j.velx)
             elif background.rect.left < 0 and j.rect.right < LIMITEINFERIOR and j.accion in [5,6]:
                 j.rect.right = LIMITEINFERIOR
-                background.derecha()
+                background.derecha(j.velx)
             elif j.rect.left < 0:
                 j.rect.left = 0
             elif j.rect.right > background.rect.right:
@@ -297,13 +305,29 @@ def main():
         for ch in proyectiles:
             colisionJugadorChanclas = pygame.sprite.spritecollide(ch, jugadores,False)
             for i in colisionJugadorChanclas:
-                vidas = jugador.vida
-                jugadores.remove(i)
-                vidas -= 1
-                jugador = pp.Jugador(listaSpritesSantiago)
-                jugador.vidas = vidas
-                jugadores.add(jugador)
+                #vidas = jugador.vida
+                #jugadores.remove(i)
+                #vidas -= 1
+                #jugador = pp.Jugador(listaSpritesSantiago)
+                #jugador.vidas = vidas
+                #jugadores.add(jugador)
+                jugador.vida -= 1
+                if jugador.tiempoSlow == 0:
+                    jugador.tiempoSlow = 5
                 proyectiles.remove(ch)
+
+                # actualizar el movimiento del jugador con el efecto incluido
+                if jugador.accion == 0:
+                    jugador.idle()
+                elif jugador.accion <= 3:
+                    jugador.derecha()
+                    if jugador.rect.y != 0:
+                        jugador.accion = 3
+                else:
+                    jugador.izquierda()
+                    if jugador.rect.y != 0:
+                        jugador.accion = 6
+
         
         # Colisiones entre enemigos
         rangoDeChoque = 10
@@ -367,6 +391,11 @@ def main():
         # Texto de fin del juego
         fuente = pygame.font.Font(None,38)
         info = fuente.render('FIN DEL JUEGO',True,[255,255,255])
+        
+        # dejar estatico el fondo:
+        for fon in fondos:
+            fon.velx = 0
+
         fondos.update()
         fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])

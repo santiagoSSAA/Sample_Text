@@ -1,8 +1,6 @@
 import pygame
 from pygame.locals import *
 
-VELOCIDAD = 12
-
 class Imagen(pygame.sprite.Sprite):
     def __init__(self,imagen,identificador):
         pygame.sprite.Sprite.__init__(self)
@@ -19,12 +17,12 @@ class Imagen(pygame.sprite.Sprite):
         self.rect.x += self.velx
 
     # Definir movimientos
-    def izquierda(self):
-        self.velx = -VELOCIDAD
+    def izquierda(self,velocidad):
+        self.velx = -velocidad
         pass
 
-    def derecha(self):
-        self.velx = VELOCIDAD
+    def derecha(self,velocidad):
+        self.velx = velocidad
         pass
 
     def idle(self):

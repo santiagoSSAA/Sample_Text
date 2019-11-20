@@ -37,16 +37,36 @@ class Jugador(pygame.sprite.Sprite):
         muerte izquierda = 7
 
         """
-
+        # variables para controlar los efectos
+        self.tiempoStun = 0
+        self.tiempoSlow = 0
+        self.tiempoSpeed = 0
 
     def update(self):
-        
         # calcula la gravedad
         self.calcularGravedad(1.8)
         # Define el movimiento
         self.movimiento()
         # Animar el sprite
         self.animarSprite()
+        
+        # activar/desactivar stun
+        if self.tiempoStun > 0:
+            self.stun()
+        else:
+            self.tiempoStun = 0
+        # activar/desactivar slow
+        if self.tiempoSlow > 0:
+            self.slow()
+        else:
+            self.tiempoSlow = 0
+        # activar/desactivar speed
+        if self.tiempoSpeed > 0:
+            self.speed()
+        else:
+            self.tiempoSpeed = 0
+            
+
 
     def movimiento(self):
         self.rect.x += self.velx
@@ -65,11 +85,27 @@ class Jugador(pygame.sprite.Sprite):
     def izquierda(self):
         self.accion = 5
         self.velx = -VELOCIDAD
+
+        if self.tiempoSlow > 0:
+            self.velx = self.velx //3
+        elif self.tiempoSpeed > 0:
+            self.velx = self.velx*2
+        elif self.tiempoStun > 0:
+            self.velx = 0
+
         pass
 
     def derecha(self):
         self.accion = 1
         self.velx = VELOCIDAD
+
+        if self.tiempoSlow > 0:
+            self.velx = self.velx //3
+        elif self.tiempoSpeed > 0:
+            self.velx = self.velx*2
+        elif self.tiempoStun > 0:
+            self.velx = 0
+
         pass
 
     def idle(self):
@@ -88,8 +124,32 @@ class Jugador(pygame.sprite.Sprite):
             self.accion = 3
         elif self.accion > 3:
             self.accion = 6
+
+        if self.tiempoSlow > 0:
+            self.vely = self.vely //2
+        elif self.tiempoStun > 0:
+            self.vely = 0
+        elif self.tiempoSpeed > 0:
+            self.vely = self.vely *2
         
-        self.vely = -23
+        self.vely = -(VELOCIDAD*2)
+
+    def stun(self):
+        """self.velx = 0
+        self.vely = 0"""
+        pass
+
+    def slow(self):
+        """self.velx = self.velx //3
+        if self.vely != 0:
+            self.vely = self.vely //3"""
+        pass
+
+    def speed(self):
+        """self.velx = self.velx*2
+        if self.vely != 0:
+            self.vely = self.vely *2"""
+        pass
 
     def calcularGravedad(self,gravedad):
         if self.vely == 0:
