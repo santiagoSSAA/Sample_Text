@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 import Clases.Plataforma as p
+import Clases.Nivel as n
 
 #----------------------
 ANCHO= 1280

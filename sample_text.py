@@ -10,6 +10,7 @@ import Clases.objetos as o
 import Clases.background as b
 import Clases.generadores as ge
 import Clases.corazones as cor
+import Clases.Nivel as n
 #---------------------------
 import Clases.Plataforma as pl
 import random
@@ -133,6 +134,7 @@ def main():
     nivel_actual = listade_niveles[nivel_actual_no]
     #Le asignamos al jugador el nivel
     jugador.nivel = nivel_actual
+
 
     # Sprites y clase objeto
     for i in range(1,5):
