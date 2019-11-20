@@ -80,7 +80,6 @@ class Mama(pygame.sprite.Sprite):
         else:
             self.accion = 3
         pass
-
 # -------------------------------------------------------------------------------
 class Pereza(pygame.sprite.Sprite):
     def __init__(self,listaSprites):

@@ -51,7 +51,7 @@ class Jugador(pygame.sprite.Sprite):
     def movimiento(self):
         self.rect.x += self.velx
         self.rect.y += self.vely
-    
+
     def animarSprite(self):
         self.image = self.listaSprites[self.accion][self.frame]
         if self.contadorAnimacion % 4 == 0:

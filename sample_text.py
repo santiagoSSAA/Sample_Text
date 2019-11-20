@@ -16,7 +16,7 @@ SUELO = 660
 LIMITE = ANCHO - 130
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
-NUMEROVIDAS = 7
+NUMEROVIDAS = 3
 # -------------------------------------------------------------------------------
 def main():
     pygame.init()
@@ -124,7 +124,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-        
+            
             # Manejo de las teclas
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RIGHT:
@@ -140,6 +140,7 @@ def main():
                 if event.key != pygame.K_UP:
                     jugador.idle()
                     background.idle()
+            
         # ----------------------------------------------------------------------------------------------------
         # Control
         for j in jugadores:
