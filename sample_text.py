@@ -42,12 +42,12 @@ def main():
     finDeJuego = False
 
     # Cargar imagenes
-    spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png").convert_alpha()
-    spriteMama = pygame.image.load("Sprites/Sprite_Sheet_mama.png").convert_alpha()
-    spriteObjetos = pygame.image.load("Sprites/Sprite_Sheet_Objetos.png").convert_alpha()
-    spriteBackground = pygame.image.load("Sprites/background.gif").convert_alpha()
-    spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png").convert_alpha()
-    spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png").convert_alpha()
+    spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png")
+    spriteMama = pygame.image.load("Sprites/Sprite_Sheet_mama.png")
+    spriteObjetos = pygame.image.load("Sprites/Sprite_Sheet_Objetos.png")
+    spriteBackground = pygame.image.load("Sprites/background.gif")
+    spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
+    spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
 
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
@@ -203,15 +203,17 @@ def main():
                 # Disparo de proyectiles
                 if ene.temporizadorProyectil == 0 and len(proyectiles) < 6:
                     chancla = e.Chancla(listaSpritesChancla)
+                    
+                    if ene.direccion == 0:
+                        chancla.direccion =0
+                        chancla.derecha()
+                    elif ene.direccion == 1:
+                        chancla.direccion = 1
+                        chancla.izquierda()
+                    
                     proyectiles.add(chancla)
                     chancla.rect.x = ene.rect.x
                     chancla.rect.y = ene.rect.y
-                    if ene.direccion == 0:
-                        chancla.derecha()
-                        chancla.direccion == 0
-                    elif ene.direccion == 1:
-                        chancla.izquierda()
-                        chancla.direccion == 1
                         
                 # Movimiento mama (definir los limites de movimiento en la mama)
                 if ene.rect.right >= background.rect.right:
@@ -244,6 +246,7 @@ def main():
             if ene.tipo == "pereza":
                 if ene.vida == 0:
                     enemigos.remove(ene)
+
         for ob in objetos:
             # Sincronizar el movimiento de los objetos con el del fondo
             if ob.rect.y != 30:
@@ -265,7 +268,7 @@ def main():
                     elif selectorEnemigo == 2:
                         enemigo = e.Pereza(listaSpritesPereza)
                         enemigo.rect.x = g.rect.x + random.randrange(-50,51)
-                        enemigo.rect.bottom = g.rect.bottom
+                        enemigo.rect.bottom = g.rect.bottom + 65
                     enemigos.add(enemigo)
                     g.salirSpawn = False
             
@@ -285,8 +288,12 @@ def main():
             elif pro.direccion == 1:
                 pro.izquierda()
             
+            if pro.rect.x < 0 or pro.rect.x > ANCHO:
+                proyectiles.remove(pro)
+            
             if background.velx != 0:
                 pro.velx += background.velx
+
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -306,7 +313,7 @@ def main():
             rangoChoque = 50
             ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
             for i in ColisionJugadorEnemigo:
-                if i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
+                if ene.tipo == "mama" and i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
                     vidas = jugador.vida
                     jugadores.remove(i)
                     vidas -= 1
@@ -314,13 +321,29 @@ def main():
                     jugador.vida = vidas
                     jugadores.add(jugador)
 
+                elif ene.tipo == "pereza":
+                    if jugador.tiempoSlow == 0:
+                        jugador.tiempoSlow = 5
+
+                # actualizar el movimiento del jugador con el efecto incluido
+                if jugador.accion == 0:
+                    jugador.idle()
+                elif jugador.accion <= 3:
+                    jugador.derecha()
+                    if jugador.rect.y != 0:
+                        jugador.accion = 1
+                else:
+                    jugador.izquierda()
+                    if jugador.rect.y != 0:
+                        jugador.accion = 5
+
         # Colisiones Chanclas contra jugador
         for ch in proyectiles:
             colisionJugadorChanclas = pygame.sprite.spritecollide(ch, jugadores,False)
             for i in colisionJugadorChanclas:
                 jugador.vida -= 1
                 if jugador.tiempoStun == 0:
-                    jugador.tiempoStun = 2
+                    jugador.tiempoStun = 1
                 proyectiles.remove(ch)
 
                 # actualizar el movimiento del jugador con el efecto incluido
@@ -329,11 +352,11 @@ def main():
                 elif jugador.accion <= 3:
                     jugador.derecha()
                     if jugador.rect.y != 0:
-                        jugador.accion = 3
+                        jugador.accion = 1
                 else:
                     jugador.izquierda()
                     if jugador.rect.y != 0:
-                        jugador.accion = 6
+                        jugador.accion = 5
 
         
         # Colisiones entre enemigos
@@ -375,6 +398,7 @@ def main():
         generadores.draw(pantalla)
         corazones.draw(pantalla)
         proyectiles.draw(pantalla)
+        # dibujar el texto
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])
         # Refrescar la pantalla

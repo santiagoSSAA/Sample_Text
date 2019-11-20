@@ -152,7 +152,7 @@ class Chancla(pygame.sprite.Sprite):
         self.contadorAnimacion = 0
         # direccion
         self.direccion = 0
-        
+
     def update(self):
         # Define el movimiento
         self.movimiento()
@@ -182,3 +182,4 @@ class Chancla(pygame.sprite.Sprite):
         self.accion = 0
         self.velx = VELOCIDADPROYECTIL
         pass
+# -------------------------------------------------------------------------------

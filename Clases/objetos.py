@@ -34,7 +34,7 @@ class Generador(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
-        self.rect.x = random.randrange(200,1000)
+        self.rect.x = random.randrange(500,1000)
         self.rect.y = suelo - 50
         self.identificador = identificador
         self.cantidadEnemigos = CANTIDADENEMIGOS
