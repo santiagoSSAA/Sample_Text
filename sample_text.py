@@ -10,6 +10,8 @@ import Clases.objetos as o
 import Clases.background as b
 import Clases.generadores as ge
 import Clases.corazones as cor
+#---------------------------
+import Clases.Plataforma as pl
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -19,11 +21,75 @@ LIMITE = 1150
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
 NUMEROVIDAS = 5
+# Colores (van implementando la splataformas, despues pueden ser eliminados)
+NEGRO = (0, 0, 0)
+BLANCO = (255, 255, 255)
+AZUL = (0, 0, 255)
+ROJO = (255, 0, 0)
+VERDE = (0, 255, 0)
+#---------------------------------------------------
+#NOTA: coloco estas clases aqui porque no he podido importarlas Y que funcione el programa
+class Nivel(object):
+    """ Esta es una super clase generica usada para definir un nivel.
+        Crea una clase hija especifica para cada nivel con una info especifica. """
+
+    def __init__(self, protagonista):
+        """ Constructor. Requerido para cuando las plataformas moviles colisionan con el protagonista. """
+        self.listade_plataformas = pygame.sprite.Group()
+        self.listade_enemigos = pygame.sprite.Group()
+        self.protagonista = protagonista
+
+
+        # Imagen de fondo
+        self.imagende_fondo = None
+
+
+    # Actualizamos todo en este nivel
+    def update(self):
+        """ Actualizamos todo en este nivel."""
+        self.listade_plataformas.update()
+        self.listade_enemigos.update()
+
+    def draw(self, pantalla):
+        """ Dibujamos todo en este nivel. """
+
+        # Dibujamos todas las listas de sprites que tengamos
+        self.listade_plataformas.draw(pantalla)
+        self.listade_enemigos.draw(pantalla)
+
+
+# Creamos las plataformas para el nivel
+class Nivel_01(Nivel):
+    """ Definicion para el nivel 1. """
+
+    def __init__(self, protagonista):
+        """ Creamos el nivel 1. """
+
+        # llamamos al constructor padre
+        Nivel.__init__(self, protagonista)
+
+        # Array con la informacion sobre el largo, alto, x, e y
+        nivel = [ [210, 20, 500, 500],
+                  [210, 20, 200, 400],
+                  [210, 20, 600, 300],
+                  ]
+
+        # Iteramos sobre el array anterior y anadimos plataformas
+        for plataforma in nivel:
+            bloque = pl.Plataforma(plataforma[0], plataforma[1])
+            bloque.rect.x = plataforma[2]
+            bloque.rect.y = plataforma[3]
+            bloque.protagonista = self.protagonista
+            self.listade_plataformas.add(bloque)
+
+
 # -------------------------------------------------------------------------------
 def main():
     pygame.init()
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
+    pygame.display.set_caption("Nivel 1 :v")
     reloj = pygame.time.Clock()
+
 
     # Texto de vidas
     fuente = pygame.font.Font(None,24)
@@ -37,6 +103,7 @@ def main():
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
+    plataformas = pygame.sprite.Group()
 
     # variables ventanas
     finDeJuego = False
@@ -56,6 +123,16 @@ def main():
     jugador = pp.Jugador(listaSpritesSantiago)
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
+
+    # Creamos todos los niveles
+    listade_niveles = []
+    listade_niveles.append(Nivel_01(jugador))
+
+    # Establecemos el nivel actual
+    nivel_actual_no = 0
+    nivel_actual = listade_niveles[nivel_actual_no]
+    #Le asignamos al jugador el nivel
+    jugador.nivel = nivel_actual
 
     # Sprites y clase objeto
     for i in range(1,5):
@@ -79,6 +156,8 @@ def main():
     for i in range(numero_Puertas):
         puerta = ge.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
+    
+
 
     # Sprites y clase imagen
     background = b.Imagen(spriteBackground,1)
@@ -101,8 +180,9 @@ def main():
                 if event.key == pygame.K_LEFT:
                     jugador.izquierda()
                 if event.key == pygame.K_UP:
-                    if jugador.rect.bottom > SUELO:
+                    if jugador.rect.bottom > SUELO or jugador.salto_plataforma():
                         jugador.salto()
+                    
             
             # Detener el personaje en caso de no oprimir nada
             if event.type == pygame.KEYUP:
@@ -176,7 +256,7 @@ def main():
 
         #Creador Spawns Mama
         for g in generadores:
-            if len(enemigos) < (3*len(generadores)):
+            if len(enemigos) < (0*len(generadores)):
                 if g.temp == 0:
                     g.salirSpown = True
                 if g.salirSpown:
@@ -222,7 +302,8 @@ def main():
                     jugadores.add(jugador)
                     jugador.idle()
                     jugador.vida = vidas
-
+    
+        
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
@@ -232,6 +313,9 @@ def main():
         generadores.update()
         spawnMamas.update()
         corazones.update()
+
+        nivel_actual.update()
+        plataformas.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -242,6 +326,10 @@ def main():
         generadores.draw(pantalla)
         spawnMamas.draw(pantalla)
         corazones.draw(pantalla)
+
+        plataformas.draw(pantalla)
+        nivel_actual.draw(pantalla)
+
         pantalla.blit(info,[55,20])
         # Refrescar la pantalla
         pygame.display.flip()
@@ -265,6 +353,8 @@ def main():
         fondos.draw(pantalla)
         pantalla.blit(info,[ANCHO//2-100,ALTO//2])
         pygame.display.flip()
+        pygame.quit()
+
 
         
     
