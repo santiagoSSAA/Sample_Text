@@ -17,12 +17,12 @@ class Imagen(pygame.sprite.Sprite):
         self.rect.x += self.velx
 
     # Definir movimientos
-    def izquierda(self):
-        self.velx = -10
+    def izquierda(self,velocidad):
+        self.velx = -velocidad
         pass
 
-    def derecha(self):
-        self.velx = 10
+    def derecha(self,velocidad):
+        self.velx = velocidad
         pass
 
     def idle(self):
