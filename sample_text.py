@@ -1,5 +1,6 @@
 #ODIO WINDOWS XD 2.0
 import pygame
+import ConfigParser
 from pygame.locals import *
 # -------------------------------------------------------------------------------
 import Libreria.libreriaFrames as lf
@@ -29,6 +30,13 @@ def main():
     fuente = pygame.font.Font(None,24)
     info = fuente.render("VIDAS",True,[0,0,0])
     contadorTiempo = 1
+
+    #importo el mapa
+    mapa = ConfigParser.ConfigParser()
+    mapa.read('Libreria/mapaN1.map')
+
+    terreno_plataforma = mapa.get('info','terreno') 
+
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
     generadores = pygame.sprite.Group()
@@ -52,7 +60,7 @@ def main():
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
     spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
 
-    spriteTerreno =  pygame.image.load("Sprites/terrenogen.png")
+    spriteTerreno =  pygame.image.load(terreno_plataforma)
 
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
@@ -118,6 +126,55 @@ def main():
     plataformas.add(plataforma)
     #aqui actualizo la lista que tiene guardada el jugador con las plataformas
     jugador.lista_plataformas.append(plataforma)
+
+    #--------------------------------------------
+    #MAS O MENOS DESDE AQUI INCORPORO LAS PLATAFORMAS EN EL MAPA
+    mp = mapa.get('info', 'mapa')# aqui guardo el mapa en la variable mp
+    mp = mp.split('\n') #aqui lo guardo en listas
+
+    fila_terreno = int(mapa.get('plataforma', 'fil'))
+    columna_terreno = int(mapa.get('plataforma', 'col'))
+
+
+    #FUNCION QUE PONE LOS SPRITES DEL MAPA EN PANTALLA
+    conteoy = 0 #Conteo pixeles y
+    for cada_fila in mp:
+        conteox = 0 #conteo pixeles x
+        for cada_elemento in cada_fila:
+            #aqui, pone los sprites
+            tipo = mapa.get(cada_elemento,'tipo')
+            if  tipo == 'vacio':
+                pass
+            elif tipo == 'plataforma':
+                p = plataforma(listaSpritesTerreno[9][6],[conteox,conteoy])
+                plataformas.add(p)
+                jugador.lista_plataformas.append(p)
+            elif tipo == 'puerta':
+                p = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
+                generadores.add(p)
+
+            conteox += 50
+        conteoy += 50
+#----------------------------
+
+#FUNCION QUE PONE LOS SPRITES DEL MAPA EN PANTALLA
+    conteoy = 0 #Conteo pixeles y
+    for cada_fila in mp:
+        conteox = 0 #conteo pixeles x
+        for cada_elemento in cada_fila:
+            #aqui, pone los sprites
+            tipo = mapa.get(cada_elemento,'tipo')
+            if  tipo == 'vacio':
+                pass
+            elif tipo == 'muro':
+                b = Bloque(muro[6][18],[conteox,conteoy])
+                bloques.add(b)
+            elif tipo == 'agua':
+                b = Bloque(muro[3][13],[conteox,conteoy])
+                bloques.add(b)
+
+            conteox += 32
+        conteoy += 32
 
     # ----------------------------------------------------------------------------------------------------
     while True and (not finDeJuego):
@@ -416,6 +473,33 @@ def main():
          
         # Colisiones jugador con plataformas
         ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+            # Si nos estamos desplazando hacia la derecha, hacemos que nuestro lado derecho sea el lado izquierdo del objeto que hemos tocado-
+            if jugador.velx > 0:
+                jugador.rect.right = cada_plataforma.rect.left
+            elif jugador.velx < 0:
+                # En caso contrario, si nos desplazamos hacia la izquierda, hacemos lo opuesto.
+                jugador.rect.left = cada_plataforma.rect.right
+
+        # Desplazar arriba/abajo
+        jugador.rect.y += jugador.vely
+
+        # Comprobamos si hemos chocado contra algo
+        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+            # Restablecemos nuestra posicion basandonos en la parte superior/inferior del objeto.
+            if jugador.vely > 0:
+                jugador.rect.bottom = cada_plataforma.rect.top
+            elif jugador.vely < 0:
+                jugador.rect.top = cada_plataforma.rect.bottom
+
+            # Detenemos nuestro movimiento vertical
+            jugador.vely = 0
+
+        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+                if ((jugador.rect.right-50)  < cada_plataforma.rect.left) or (jugador.rect.left > (cada_plataforma.rect.right- 20)):
+                    jugador.calcularGravedad()
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
