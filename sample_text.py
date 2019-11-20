@@ -37,7 +37,6 @@ def main():
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
-
     # variables ventanas
     finDeJuego = False
 
@@ -48,7 +47,6 @@ def main():
     spriteBackground = pygame.image.load("Sprites/background.gif")
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
     spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
-
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
     listaSpritesObjeto = lf.recortarSprite(pantalla,spriteObjetos,3,4)
@@ -60,7 +58,7 @@ def main():
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
 
-    # Sprites y clase Objetos
+    # Sprites y clase Objetos a recolectar
     for i in range(1,5):
         objeto = None
         if i  == 1:

@@ -69,3 +69,23 @@ class Corazon(pygame.sprite.Sprite):
     
     def corazonInactivo(self):
         self.image = self.listaSprites[0][1]
+
+# -------------------------------------------------------------------------------
+class Cafe(pygame.sprite.Sprite):
+    def __init__(self,image):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.velx = 0
+        self.vely = 0
+        self.rect.x = random.randrange(150,1000)
+        self.rect.y = random.randrange(450,550)
+        self.tipo = "cafe"
+        
+    def update(self):
+        # define movimiento
+        self.movimiento()
+
+    def movimiento(self):
+        self.rect.x += self.velx
+        self.rect.y += self.vely
