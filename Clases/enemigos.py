@@ -150,7 +150,9 @@ class Chancla(pygame.sprite.Sprite):
         self.numeroFrames = 4
         # contador
         self.contadorAnimacion = 0
-
+        # direccion
+        self.direccion = 0
+        
     def update(self):
         # Define el movimiento
         self.movimiento()

@@ -98,6 +98,7 @@ def main():
     background = b.Imagen(spriteBackground,1)
     fondos.add(background)
 
+    # ----------------------------------------------------------------------------------------------------
     while True and (not finDeJuego):
         # Logica del tiempo
         if contadorTiempo < rapidez:
@@ -175,7 +176,7 @@ def main():
                 background.izquierda(j.velx)
             elif background.rect.left < 0 and j.rect.right < LIMITEINFERIOR and j.accion in [5,6]:
                 j.rect.right = LIMITEINFERIOR
-                background.derecha(j.velx)
+                background.derecha(-j.velx)
             elif j.rect.left < 0:
                 j.rect.left = 0
             elif j.rect.right > background.rect.right:
@@ -200,15 +201,18 @@ def main():
                     ene.izquierda()
                 
                 # Disparo de proyectiles
-                if ene.temporizadorProyectil == 0:
+                if ene.temporizadorProyectil == 0 and len(proyectiles) < 6:
                     chancla = e.Chancla(listaSpritesChancla)
                     proyectiles.add(chancla)
                     chancla.rect.x = ene.rect.x
                     chancla.rect.y = ene.rect.y
                     if ene.direccion == 0:
                         chancla.derecha()
+                        chancla.direccion == 0
                     elif ene.direccion == 1:
                         chancla.izquierda()
+                        chancla.direccion == 1
+                        
                 # Movimiento mama (definir los limites de movimiento en la mama)
                 if ene.rect.right >= background.rect.right:
                     ene.direccion = 1
@@ -274,6 +278,15 @@ def main():
                 if c.identificador == jugador.vida+1:
                     c.corazonInactivo()
         
+        # Sincronizar la velocidad del proyectil con la del background
+        for pro in proyectiles:
+            if pro.direccion ==  0:
+                pro.derecha()
+            elif pro.direccion == 1:
+                pro.izquierda()
+            
+            if background.velx != 0:
+                pro.velx += background.velx
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -305,15 +318,9 @@ def main():
         for ch in proyectiles:
             colisionJugadorChanclas = pygame.sprite.spritecollide(ch, jugadores,False)
             for i in colisionJugadorChanclas:
-                #vidas = jugador.vida
-                #jugadores.remove(i)
-                #vidas -= 1
-                #jugador = pp.Jugador(listaSpritesSantiago)
-                #jugador.vidas = vidas
-                #jugadores.add(jugador)
                 jugador.vida -= 1
-                if jugador.tiempoSlow == 0:
-                    jugador.tiempoSlow = 5
+                if jugador.tiempoStun == 0:
+                    jugador.tiempoStun = 2
                 proyectiles.remove(ch)
 
                 # actualizar el movimiento del jugador con el efecto incluido

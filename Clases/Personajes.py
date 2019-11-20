@@ -119,6 +119,7 @@ class Jugador(pygame.sprite.Sprite):
     
     def salto(self):
         self.rect.y = self.rect.y - 1
+        self.vely = -(VELOCIDAD*2)
         
         if self.accion <= 3:
             self.accion = 3
@@ -131,8 +132,6 @@ class Jugador(pygame.sprite.Sprite):
             self.vely = 0
         elif self.tiempoSpeed > 0:
             self.vely = self.vely *2
-        
-        self.vely = -(VELOCIDAD*2)
 
     def stun(self):
         """self.velx = 0
