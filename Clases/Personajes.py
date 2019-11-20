@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 
 VELOCIDAD = 12
+SUELO = 650
 
 class Jugador(pygame.sprite.Sprite):
     def __init__(self,listaSprites):
@@ -49,8 +50,39 @@ class Jugador(pygame.sprite.Sprite):
     def update(self):
         # calcula la gravedad
         self.calcularGravedad(1.8)
-        # Define el movimiento
-        self.movimiento()
+
+        # Desplazar izquierda/derecha
+        self.rect.x += self.velx
+        
+        # Colisiones jugador con plataformas
+        ColisionesPlataformas = pygame.sprite.spritecollide(self, self.lista_plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+            # Si nos estamos desplazando hacia la derecha, hacemos que nuestro lado derecho sea el lado izquierdo del objeto que hemos tocado-
+            if self.velx > 0:
+                self.rect.right = cada_plataforma.rect.left
+            elif self.velx < 0:
+                # En caso contrario, si nos desplazamos hacia la izquierda, hacemos lo opuesto.
+                self.rect.left = cada_plataforma.rect.right
+
+        # Desplazar arriba/abajo
+        self.rect.y += self.vely
+
+        # Comprobamos si hemos chocado contra algo
+        ColisionesPlataformas = pygame.sprite.spritecollide(self, self.lista_plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+            # Restablecemos nuestra posicion basandonos en la parte superior/inferior del objeto.
+            if self.vely > 0:
+                self.rect.bottom = cada_plataforma.rect.top
+            elif self.vely < 0:
+                self.rect.top = cada_plataforma.rect.bottom
+
+            # Detenemos nuestro movimiento vertical
+            self.vely = 0
+
+        ColisionesPlataformas = pygame.sprite.spritecollide(self, self.lista_plataformas, False)
+        for cada_plataforma in ColisionesPlataformas:
+                if ((self.rect.right-50)  < cada_plataforma.rect.left) or (self.rect.left > (cada_plataforma.rect.right- 20)):
+                    self.calcularGravedad(1.8)
         # Animar el sprite
         self.animarSprite()
         
@@ -136,6 +168,19 @@ class Jugador(pygame.sprite.Sprite):
             self.vely = 0
         elif self.tiempoSpeed > 0:
             self.vely = self.vely *2
+
+    def salto_en_plataforma(self):
+        """ Llamado cuando el usuario pulsa el boton de 'saltar'. """
+
+        # Descendemos un poco y observamos si hay una plataforma debajo nuestro.
+        # Descendemos 2 pixiels 
+        self.rect.y += 2
+        ColisionesPlataformas = pygame.sprite.spritecollide(self, self.lista_plataformas, False)
+        self.rect.y -= 2
+
+        # Si esta listo para saltar, aumentamos nuestra velocidad hacia arriba
+        if len(ColisionesPlataformas) > 0 or self.rect.bottom >= SUELO:
+            self.salto()
 
     def stun(self):
         """self.velx = 0

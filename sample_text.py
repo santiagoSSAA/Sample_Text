@@ -1,6 +1,6 @@
 #ODIO WINDOWS XD 2.0
 import pygame
-import ConfigParser
+import configparser
 from pygame.locals import *
 # -------------------------------------------------------------------------------
 import Libreria.libreriaFrames as lf
@@ -8,8 +8,8 @@ import Libreria.libreriaFrames as lf
 import Clases.Personajes as pp
 import Clases.enemigos as e
 import Clases.objetos as o
-import Clases.background as b
-import Clases.plataforma as p
+import Clases.background as ba
+import Clases.plataforma as pl
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -32,14 +32,15 @@ def main():
     contadorTiempo = 1
 
     #importo el mapa
-    mapa = ConfigParser.ConfigParser()
+    mapa = configparser.ConfigParser()
     mapa.read('Libreria/mapaN1.map')
 
     terreno_plataforma = mapa.get('info','terreno') 
 
     # Grupos de sprites
     modificadores = pygame.sprite.Group()
-    generadores = pygame.sprite.Group()
+    generadoresMama = pygame.sprite.Group()
+    generadoresPereza = pygame.sprite.Group()
     proyectiles = pygame.sprite.Group()
     corazones = pygame.sprite.Group()
     jugadores = pygame.sprite.Group()
@@ -76,6 +77,7 @@ def main():
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
 
+    """
     # Sprites y clase Objetos a recolectar
     for i in range(1,5):
         objeto = None
@@ -91,6 +93,7 @@ def main():
         modificador = o.Cafe(listaSpritesObjeto[3][0])
         modificadores.add(modificador)
         pass
+    """
 
     # Sprites y clase Corazones
     numero_Corazones = jugador.vida
@@ -110,30 +113,33 @@ def main():
                     c.rect.x = 10 + (35*(5))
                     c.rect.y = c.rect.y + (35*(i//5))
 
-
+    """
     # crea puertas (generadores de enemigos)
     numero_Puertas = random.randrange(2,5)
     for i in range(numero_Puertas):
         puerta = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
         generadores.add(puerta)
+    """
 
     # Sprites y clase imagen
-    background = b.Imagen(spriteBackground,1)
+    background = ba.Imagen(spriteBackground,1)
     fondos.add(background)
 
     #Sprites y clase Plataforma
-    plataforma = p.Plataforma(listaSpritesTerreno[9][6])
+    '''
+    plataforma = pl.Plataforma(listaSpritesTerreno[9][6])
     plataformas.add(plataforma)
+    '''
     #aqui actualizo la lista que tiene guardada el jugador con las plataformas
-    jugador.lista_plataformas.append(plataforma)
+    ##jugador.lista_plataformas.append(plataforma)
 
     #--------------------------------------------
     #MAS O MENOS DESDE AQUI INCORPORO LAS PLATAFORMAS EN EL MAPA
     mp = mapa.get('info', 'mapa')# aqui guardo el mapa en la variable mp
     mp = mp.split('\n') #aqui lo guardo en listas
 
-    fila_terreno = int(mapa.get('plataforma', 'fil'))
-    columna_terreno = int(mapa.get('plataforma', 'col'))
+    fila_terreno = int(mapa.get('-', 'fil'))
+    columna_terreno = int(mapa.get('-', 'col'))
 
 
     #FUNCION QUE PONE LOS SPRITES DEL MAPA EN PANTALLA
@@ -146,35 +152,35 @@ def main():
             if  tipo == 'vacio':
                 pass
             elif tipo == 'plataforma':
-                p = plataforma(listaSpritesTerreno[9][6],[conteox,conteoy])
+                p = pl.Plataforma(listaSpritesTerreno[9][6],[conteox,conteoy])
                 plataformas.add(p)
                 jugador.lista_plataformas.append(p)
             elif tipo == 'puerta':
-                p = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
-                generadores.add(p)
+                p = o.GeneradorMama(listaSpritesObjeto[3][2],5,[conteox,conteoy])
+                generadoresMama.add(p)
+            elif tipo == 'libro':
+                l = o.Objeto(listaSpritesObjeto[0][2],1,[conteox,conteoy])
+                objetos.add(l)
+            elif tipo == 'photoshop':
+                ph = o.Objeto(listaSpritesObjeto[2][1],3,[conteox,conteoy])
+                objetos.add(ph)
+            elif tipo == 'cafe':
+                c = o.Cafe(listaSpritesObjeto[3][0],[conteox,conteoy])
+                objetos.add(c)
+            elif tipo == 'python':
+                p = o.Objeto(listaSpritesObjeto[3][2],4,[conteox,conteoy])
+                objetos.add(p)
+            elif tipo == 'musica':
+                m = o.Objeto(listaSpritesObjeto[2][0],2,[conteox,conteoy])
+                objetos.add(m)
+            elif tipo == 'perezita':
+                p = o.GeneradorPereza(listaSpritesObjeto[3][1],6,[conteox,conteoy])
+                generadoresPereza.add(p)
+
 
             conteox += 50
         conteoy += 50
-#----------------------------
-
-#FUNCION QUE PONE LOS SPRITES DEL MAPA EN PANTALLA
-    conteoy = 0 #Conteo pixeles y
-    for cada_fila in mp:
-        conteox = 0 #conteo pixeles x
-        for cada_elemento in cada_fila:
-            #aqui, pone los sprites
-            tipo = mapa.get(cada_elemento,'tipo')
-            if  tipo == 'vacio':
-                pass
-            elif tipo == 'muro':
-                b = Bloque(muro[6][18],[conteox,conteoy])
-                bloques.add(b)
-            elif tipo == 'agua':
-                b = Bloque(muro[3][13],[conteox,conteoy])
-                bloques.add(b)
-
-            conteox += 32
-        conteoy += 32
+#---------------------------
 
     # ----------------------------------------------------------------------------------------------------
     while True and (not finDeJuego):
@@ -221,7 +227,7 @@ def main():
                 if event.key == pygame.K_LEFT:
                     jugador.izquierda()
                 if event.key == pygame.K_UP:
-                    if jugador.rect.bottom > SUELO:
+                    if jugador.rect.bottom > SUELO or jugador.salto_en_plataforma():
                         jugador.salto()
             
             # Detener el personaje en caso de no oprimir nada
@@ -332,22 +338,26 @@ def main():
             else:
                 ob.velx = 0
 
-        for g in generadores:
+        for g in generadoresMama:
             # Generar mamas
-            if len(enemigos) < (3*len(generadores)):
+            if len(enemigos) < (3*len(generadoresMama)):
                 if g.temp == 0:
                     g.salirSpawn = True
                 if g.salirSpawn:
-                    selectorEnemigo = random.randrange(1,3)
-                    if selectorEnemigo == 1:
-                        enemigo = e.Mama(listaSpritesMama)
-                        enemigo.rect.x = g.rect.x               
-                        enemigo.rect.bottom =g.rect.bottom
-                    elif selectorEnemigo == 2:
-                        enemigo = e.Pereza(listaSpritesPereza)
-                        enemigo.rect.x = g.rect.x + random.randrange(-50,51)
-                        enemigo.rect.bottom = g.rect.bottom + 65
-                    enemigos.add(enemigo)
+                    enemigo = e.Mama(listaSpritesMama)
+                    enemigo.rect.x = g.rect.x               
+                    enemigo.rect.bottom =g.rect.bottom
+                    enemigos.add(enemigo) 
+                    g.salirSpawn = False
+
+        for g in generadoresPereza:
+            #generar perezas
+            if len(enemigos) < (3*len(generadoresPereza)):
+                if g.temp == 0:
+                    enemigo = e.Pereza(listaSpritesPereza)
+                    enemigo.rect.x = g.rect.x + random.randrange(-50,51)
+                    enemigo.rect.bottom = g.rect.bottom + 65
+                    enemigos.add(enemigo)                    
                     g.salirSpawn = False
             
             # Sincronizar el movimiento de los generadores con el del entorno
@@ -374,6 +384,9 @@ def main():
 
         for mod in modificadores:
             mod.velx = background.velx
+
+        for pla in jugador.lista_plataformas:
+            pla.velx = background.velx
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -454,11 +467,19 @@ def main():
                 pass
 
         # Colisiones Jugador con generadores
-        for g in generadores:
-            ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadores, False)
+        for g in generadoresMama:
+            ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadoresMama, False)
             for i in ColisionesGeneradores:
                 if abs(jugador.rect.bottom - i.rect.top) <=10 and jugador.vely > 0 :
-                    generadores.remove(i)
+                    generadoresMama.remove(i)
+        
+        for g in generadoresPereza:
+            ColisionesGeneradores = pygame.sprite.spritecollide(jugador, generadoresPereza, False)
+            for i in ColisionesGeneradores:
+                if abs(jugador.rect.bottom - i.rect.top) <=10 and jugador.vely > 0 :
+                    generadoresPereza.remove(i)
+        
+
         
         for mod in modificadores:
             ColisionesModificadores = pygame.sprite.spritecollide(jugador, modificadores,False)
@@ -471,45 +492,19 @@ def main():
                     temporizador = 300
                 modificadores.remove(i)
          
-        # Colisiones jugador con plataformas
-        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
-        for cada_plataforma in ColisionesPlataformas:
-            # Si nos estamos desplazando hacia la derecha, hacemos que nuestro lado derecho sea el lado izquierdo del objeto que hemos tocado-
-            if jugador.velx > 0:
-                jugador.rect.right = cada_plataforma.rect.left
-            elif jugador.velx < 0:
-                # En caso contrario, si nos desplazamos hacia la izquierda, hacemos lo opuesto.
-                jugador.rect.left = cada_plataforma.rect.right
-
-        # Desplazar arriba/abajo
-        jugador.rect.y += jugador.vely
-
-        # Comprobamos si hemos chocado contra algo
-        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
-        for cada_plataforma in ColisionesPlataformas:
-            # Restablecemos nuestra posicion basandonos en la parte superior/inferior del objeto.
-            if jugador.vely > 0:
-                jugador.rect.bottom = cada_plataforma.rect.top
-            elif jugador.vely < 0:
-                jugador.rect.top = cada_plataforma.rect.bottom
-
-            # Detenemos nuestro movimiento vertical
-            jugador.vely = 0
-
-        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
-        for cada_plataforma in ColisionesPlataformas:
-                if ((jugador.rect.right-50)  < cada_plataforma.rect.left) or (jugador.rect.left > (cada_plataforma.rect.right- 20)):
-                    jugador.calcularGravedad()
+    
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()
         jugadores.update()
         enemigos.update()
         objetos.update()
-        generadores.update()
+        generadoresMama.update()
+        generadoresPereza.update()
         corazones.update()
         proyectiles.update()
         modificadores.update()
+        plataformas.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -517,10 +512,12 @@ def main():
         enemigos.draw(pantalla)
         jugadores.draw(pantalla)
         objetos.draw(pantalla)
-        generadores.draw(pantalla)
+        generadoresMama.draw(pantalla)
+        generadoresPereza.draw(pantalla)
         corazones.draw(pantalla)
         proyectiles.draw(pantalla)
         modificadores.draw(pantalla)
+        plataformas.draw(pantalla)
         # dibujar el texto
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])

@@ -3,19 +3,18 @@ from pygame.locals import *
 import random
 
 class Objeto(pygame.sprite.Sprite):
-    def __init__(self,image,identificador):
+    def __init__(self,image,identificador,pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
-        self.rect.x = random.randrange(150,1000)
-        self.rect.y = random.randrange(450,550)
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
         self.identificador = identificador
 
     def update(self):
-        # define movimiento
-        self.movimiento()
+        self.rect.x += self.velx
         # posicionar los corazones
         if self.identificador == 5 or self.identificador == 6:
             self.rect.y = 30
@@ -27,15 +26,15 @@ class Objeto(pygame.sprite.Sprite):
 # -------------------------------------------------------------------------------
 CANTIDADENEMIGOS = 5
 
-class Generador(pygame.sprite.Sprite):
-    def __init__(self,image,identificador,suelo):
+class GeneradorPereza(pygame.sprite.Sprite):
+    def __init__(self,image,identificador,pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
-        self.rect.x = random.randrange(500,1000)
-        self.rect.y = suelo - 50
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
         self.identificador = identificador
         self.cantidadEnemigos = CANTIDADENEMIGOS
         self.salirSpawn = False
@@ -43,16 +42,37 @@ class Generador(pygame.sprite.Sprite):
         self.temp = random.randrange(100,150)
     
     def update(self):
-        # define movimiento
-        self.movimiento()
+        self.rect.x += self.velx
+        if self.temp >= 0:
+            self.temp -= 1
+        else:
+            self.temp = random.randrange(100,150)
+#----------------------------------------------------
+class GeneradorMama(pygame.sprite.Sprite):
+    def __init__(self,image,identificador,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.velx = 0
+        self.vely = 0
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
+        self.identificador = identificador
+        self.cantidadEnemigos = CANTIDADENEMIGOS
+        self.salirSpawn = False
+        #esto es el temporizador del generador
+        self.temp = random.randrange(100,150)
+    
+    def update(self):
+        self.rect.x += self.velx
         if self.temp >= 0:
             self.temp -= 1
         else:
             self.temp = random.randrange(100,150)
 
-    def movimiento(self):
-        self.rect.x += self.velx
-        self.rect.y += self.vely
+   
+
+
 # -------------------------------------------------------------------------------
 class Corazon(pygame.sprite.Sprite):
     def __init__(self,listaSprites,identificador):
@@ -72,14 +92,14 @@ class Corazon(pygame.sprite.Sprite):
 
 # -------------------------------------------------------------------------------
 class Cafe(pygame.sprite.Sprite):
-    def __init__(self,image):
+    def __init__(self,image,pos):
         pygame.sprite.Sprite.__init__(self)
         self.image = image
         self.rect = self.image.get_rect()
         self.velx = 0
         self.vely = 0
-        self.rect.x = random.randrange(150,1000)
-        self.rect.y = random.randrange(450,550)
+        self.rect.x = pos[0]
+        self.rect.y = pos[1]
         self.tipo = "cafe"
         
     def update(self):
@@ -88,4 +108,10 @@ class Cafe(pygame.sprite.Sprite):
 
     def movimiento(self):
         self.rect.x += self.velx
-        self.rect.y += self.vely
+
+#1: libro
+#2: musica
+#3 photoshop
+#4: python
+#5: puerta
+#6: cosito insulto
