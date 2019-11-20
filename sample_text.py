@@ -8,6 +8,7 @@ import Clases.Personajes as pp
 import Clases.enemigos as e
 import Clases.objetos as o
 import Clases.background as b
+import Clases.Plataforma as p
 import random
 # -------------------------------------------------------------------------------
 ANCHO = 1280
@@ -37,6 +38,9 @@ def main():
     enemigos = pygame.sprite.Group()
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
+
+    plataformas = pygame.sprite.Group()
+
     # variables ventanas
     finDeJuego = False
 
@@ -47,12 +51,18 @@ def main():
     spriteBackground = pygame.image.load("Sprites/background.gif")
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
     spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
+
+    spriteTerreno =  pygame.image.load("Sprites/terrenogen.png")
+
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
     listaSpritesObjeto = lf.recortarSprite(pantalla,spriteObjetos,3,4)
     listaSpritesMama = lf.recortarSprite(pantalla,spriteMama,4,6)
     listaSpritesPereza = lf.recortarSprite(pantalla,spritePereza,3,1)
     listaSpritesChancla = lf.recortarSprite(pantalla,spriteChancla,4,2)
+
+    listaSpritesTerreno = lf.recortarSprite(pantalla,spriteTerreno,32,12)
+
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugador.vida = NUMEROVIDAS
@@ -102,6 +112,12 @@ def main():
     # Sprites y clase imagen
     background = b.Imagen(spriteBackground,1)
     fondos.add(background)
+
+    #Sprites y clase Plataforma
+    plataforma = p.Plataforma(listaSpritesTerreno[9][6])
+    plataformas.add(plataforma)
+    #aqui actualizo la lista que tiene guardada el jugador con las plataformas
+    jugador.lista_plataformas.append(plataforma)
 
     # ----------------------------------------------------------------------------------------------------
     while True and (not finDeJuego):
@@ -391,12 +407,14 @@ def main():
             ColisionesModificadores = pygame.sprite.spritecollide(jugador, modificadores,False)
             for i in ColisionesModificadores:
                 if jugador.tiempoSpeed == 0:
-                    jugador.tiempoSpeed = 3
                 if temporizador + 10 <= 300:
                     temporizador += 10
                 else:
                     temporizador = 300
                 modificadores.remove(i)
+        
+        # Colisiones jugador con plataformas
+        ColisionesPlataformas = pygame.sprite.spritecollide(jugador, plataformas, False)
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
         fondos.update()

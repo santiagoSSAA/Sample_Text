@@ -25,6 +25,10 @@ class Jugador(pygame.sprite.Sprite):
         self.objetosObtenidos = []
         # puntos de vida
         self.vida = 3
+        #para implementar los niveles
+        self.Nivel = None
+        self.lista_plataformas = []
+
         """
         parado derecha = 0
         correr derecha = 1
