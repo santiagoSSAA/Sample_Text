@@ -47,12 +47,14 @@ def main():
     spriteObjetos = pygame.image.load("Sprites/Sprite_Sheet_Objetos.png").convert_alpha()
     spriteBackground = pygame.image.load("Sprites/background.gif").convert_alpha()
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png").convert_alpha()
+    spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png").convert_alpha()
 
     # lista de sprites
     listaSpritesSantiago = lf.recortarSprite(pantalla,spriteSantiago,4,8)
     listaSpritesObjeto = lf.recortarSprite(pantalla,spriteObjetos,3,4)
     listaSpritesMama = lf.recortarSprite(pantalla,spriteMama,4,6)
     listaSpritesPereza = lf.recortarSprite(pantalla,spritePereza,3,1)
+    listaSpritesChancla = lf.recortarSprite(pantalla,spriteChancla,4,2)
     # Sprites y clase Santiago
     jugador = pp.Jugador(listaSpritesSantiago)
     jugador.vida = NUMEROVIDAS
@@ -189,6 +191,16 @@ def main():
                 elif ene.direccion == 1:
                     ene.izquierda()
                 
+                # Disparo de proyectiles
+                if ene.temporizadorProyectil == 0:
+                    chancla = e.Chancla(listaSpritesChancla)
+                    proyectiles.add(chancla)
+                    chancla.rect.x = ene.rect.x
+                    chancla.rect.y = ene.rect.y
+                    if ene.direccion == 0:
+                        chancla.derecha()
+                    elif ene.direccion == 1:
+                        chancla.izquierda()
                 # Movimiento mama (definir los limites de movimiento en la mama)
                 if ene.rect.right >= background.rect.right:
                     ene.direccion = 1
@@ -280,7 +292,19 @@ def main():
                     jugador = pp.Jugador(listaSpritesSantiago)
                     jugador.vida = vidas
                     jugadores.add(jugador)
-    
+
+        # Colisiones Chanclas contra jugador
+        for ch in proyectiles:
+            colisionJugadorChanclas = pygame.sprite.spritecollide(ch, jugadores,False)
+            for i in colisionJugadorChanclas:
+                vidas = jugador.vida
+                jugadores.remove(i)
+                vidas -= 1
+                jugador = pp.Jugador(listaSpritesSantiago)
+                jugador.vidas = vidas
+                jugadores.add(jugador)
+                proyectiles.remove(ch)
+        
         # Colisiones entre enemigos
         rangoDeChoque = 10
         for ene in enemigos:
@@ -309,6 +333,7 @@ def main():
         objetos.update()
         generadores.update()
         corazones.update()
+        proyectiles.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -318,6 +343,7 @@ def main():
         objetos.draw(pantalla)
         generadores.draw(pantalla)
         corazones.draw(pantalla)
+        proyectiles.draw(pantalla)
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])
         # Refrescar la pantalla

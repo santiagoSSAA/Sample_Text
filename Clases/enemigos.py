@@ -18,6 +18,8 @@ class Mama(pygame.sprite.Sprite):
         self.tipo = "mama"
         # direccion
         self.direccion = random.randrange(2)
+        # temporizador de proyectil
+        self.temporizadorProyectil = random.randrange(50,150)
         """
         0 = derecha
         1 = izquierda
@@ -45,6 +47,11 @@ class Mama(pygame.sprite.Sprite):
         self.movimiento()
         # Animar el sprite
         self.animarSprite()
+
+        if self.temporizadorProyectil >= 0:
+            self.temporizadorProyectil -= 1
+        else:
+            self.temporizadorProyectil = random.randrange(50,150)
         pass
 
     def movimiento(self):
@@ -133,7 +140,8 @@ class Chancla(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.listaSprites = listaSprites
         self.frame = 0
-        self.image = self.listaSprites[0][self.frame]
+        self.accion = 0
+        self.image = self.listaSprites[self.accion][self.frame]
         # velocidades
         self.velx = 0
         self.vely = 0
@@ -164,9 +172,11 @@ class Chancla(pygame.sprite.Sprite):
     
     # Definir movimientos
     def izquierda(self):
+        self.accion = 1
         self.velx = -VELOCIDADPROYECTIL
         pass
 
     def derecha(self):
+        self.accion = 0
         self.velx = VELOCIDADPROYECTIL
         pass
