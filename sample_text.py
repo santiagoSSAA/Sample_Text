@@ -67,6 +67,13 @@ def main():
             objeto = o.Objeto(listaSpritesObjeto[2][i-2],i)
         objetos.add(objeto)
     
+    # Sprites y clase modificadores
+    cantidadObjetosCafe = 10
+    for i in range(1,cantidadObjetosCafe+1):
+        modificador = o.Cafe(listaSpritesObjeto[3][0])
+        modificadores.add(modificador)
+        pass
+
     # Sprites y clase Corazones
     numero_Corazones = jugador.vida
     for i in range(1,numero_Corazones+1):
@@ -292,6 +299,8 @@ def main():
             if background.velx != 0:
                 pro.velx += background.velx
 
+        for mod in modificadores:
+            mod.velx = background.velx
         # ----------------------------------------------------------------------------------------------------
         # Colisiones con objetos
         ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
@@ -386,6 +395,7 @@ def main():
         generadores.update()
         corazones.update()
         proyectiles.update()
+        modificadores.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -396,6 +406,7 @@ def main():
         generadores.draw(pantalla)
         corazones.draw(pantalla)
         proyectiles.draw(pantalla)
+        modificadores.draw(pantalla)
         # dibujar el texto
         pantalla.blit(info,[55,20])
         pantalla.blit(tempoInfo,[ANCHO - 180,25])
