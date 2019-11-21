@@ -37,7 +37,9 @@ def main():
 
     # Musica
     musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.ogg')
+    musica_intro.set_volume(0.05)
     musica_juego = pygame.mixer.Sound('Libreria/Juego_principal.ogg')
+    musica_juego.set_volume(0.05)
 
     # Grupos de sprites
     generadoresPereza = pygame.sprite.Group()
@@ -122,7 +124,7 @@ def main():
             if  tipo == 'vacio':
                 pass
             elif tipo == 'plataforma':
-                p = pl.Plataforma(spriteTerreno,[conteox,conteoy])
+                p = pl.Plataforma(spriteTerreno,[conteox,conteoy],"normal")
                 plataformas.add(p)
                 jugador.lista_plataformas.append(p)
                 for ene in enemigos:
@@ -150,7 +152,7 @@ def main():
                 p = o.GeneradorPereza(spriteGeneradorPereza,6,[conteox,conteoy])
                 generadoresPereza.add(p)
             elif tipo == 'plataforma_Mama':
-                x = pl.Plataforma(spriteTerreno,[conteox,conteoy])
+                x = pl.Plataforma(spriteTerreno,[conteox,conteoy],"borde")
                 plataformas_Mama.add(x)
                 for ene in enemigos:
                     if ene.tipo == 'mama':
@@ -163,7 +165,6 @@ def main():
 
     # ----------------------------------------------------------------------------------------------------
     while True:
-        #musica_ingame = pygame.mixer.Sound('Libreria/Juego_principal.wav')
         # Analizar vidas restantes
         if jugador.vida < 1:
             finDeJuego = True
@@ -189,7 +190,6 @@ def main():
                             jugador.salto()
                     if event.key == pygame.K_p:
                         Pausa = True  
-                        #musica_ingame.pause()
 
                 if event.type == pygame.KEYUP:
                     if event.key != pygame.K_UP:
@@ -200,6 +200,7 @@ def main():
             if Pausa and (not finDeJuego) and (not InicioJuego):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_x:
+                        musica_juego.play()
                         Pausa = False
                         #musica_ingame.unpause()
                     if event.key == pygame.K_ESCAPE:
@@ -212,6 +213,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         main()
+                    if event.key == pygame.K_ESCAPE:
                         return
             
             # Manejo de las teclas (Inicio del juego):
@@ -278,7 +280,7 @@ def main():
                     elif j.velx <0:
                         j.accion = 5
                     else:
-                        if j.accion < 3:
+                        if j.accion <= 3:
                             j.accion = 0
                         else:
                             j.accion = 4
@@ -335,24 +337,20 @@ def main():
                         elif ene.rect.left <= 180:
                             ene.direccion = 0
                     
-                    if ene.rect.bottom < SUELO:
+                    else:
                         ene.rect.y += 2
                         ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas_Mama, False)
                         ene.rect.y -=2
 
-                        if len(ColisionesMamaPlataforma) > 0:
-                            print (ene.rect.bottom, ' ', i.rect.top)
-                            if ene.direccion == 1:
-                                
-                                ene.direccion = 0   
-                                print('shit')
-                            if ene.direccion == 0:
-                                ene.direccion = 1
+                        for i in ColisionesMamaPlataforma:
+                            if i.tipo == "borde":
+                                if ene.direccion == 1:
+                                    ene.direccion = 0
+                                    ene.rect.x += 15   
+                                elif ene.direccion == 0:
+                                    ene.direccion = 1
+                                    ene.rect.x -= 15
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
                         
                     # Calculo de velocidades mama-entorno
                     if background.velx != 0:
@@ -412,7 +410,7 @@ def main():
                 if len(enemigos) < (3*len(generadoresPereza)):
                     if g.temp == 0:
                         enemigo = e.Pereza(listaSpritesPereza)
-                        enemigo.rect.x = g.rect.x + random.randrange(-30,31)
+                        enemigo.rect.x = g.rect.x + random.randrange(-15,16)
                         enemigo.rect.bottom = g.rect.bottom + 65
                         enemigos.add(enemigo)                    
                         g.salirSpawn = False
@@ -473,7 +471,8 @@ def main():
 
                     elif ene.tipo == "pereza":
                         if jugador.tiempoSlow == 0:
-                            jugador.tiempoSlow = 5
+                            jugador.velx=0
+                            jugador.tiempoSlow = 2
 
                     # actualizar el movimiento del jugador con el efecto incluido
                     if jugador.accion == 0:
@@ -549,27 +548,6 @@ def main():
                     else:
                         temporizador = 300
                     modificadores.remove(i)
-
-            '''
-
-            #colisiones mama
-            for ene in enemigos:
-                if ene.tipo == 'mama':
-                    ene.rect.y += 2
-                    ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, ene.listaPlataformas, False)
-                    ene.rect.y -= 2
-
-                    if ene.rect.bottom < SUELO or len(ColisionesMamaPlataforma) > 0:
-                        print ('yayyy')
-                        #TODO: revisar donde se generan las mamas y hacer que aparezcan un poquito mas abajo
-                        #y ahi si hacer el codigo de las colisiones.
-                        for i in ColisionesMamaPlataforma:
-                            print ('puta vida')
-                            if ene.rect.left >= i.rect.left:
-                                ene.direccion = 0   
-                            if ene.rect.right <= i.rect.right:
-                                ene.direccion = 1
-                '''
 
         elif Pausa: # ------------------------------------------------------------------------
             musica_juego.stop()

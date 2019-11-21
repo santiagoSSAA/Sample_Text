@@ -86,22 +86,20 @@ class Jugador(pygame.sprite.Sprite):
         # Animar el sprite
         self.animarSprite()
         
-        # activar/desactivar stun
+        # desactivar stun
         if self.tiempoStun <= 0:
             self.tiempoStun = 0
-
-        # activar/desactivar slow
+        # desactivar slow
         if self.tiempoSlow <= 0:
+            if self.velx == VELOCIDAD //3:
+                if self.velx > 0:
+                    self.velx = VELOCIDAD
+                elif self.velx < 0:
+                    self.velx = -VELOCIDAD
             self.tiempoSlow = 0
-        # activar/desactivar speed
+        # desactivar speed
         if self.tiempoSpeed <= 0:
             self.tiempoSpeed = 0
-            
-
-
-    def movimiento(self):
-        self.rect.x += self.velx
-        self.rect.y += self.vely
 
     def animarSprite(self):
         self.image = self.listaSprites[self.accion][self.frame]

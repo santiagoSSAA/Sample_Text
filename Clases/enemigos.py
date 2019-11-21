@@ -2,7 +2,7 @@ import pygame
 from pygame.locals import *
 import random
 
-VELOCIDAD = 4
+VELOCIDAD = 3
 SUELO = 650
 
 class Mama(pygame.sprite.Sprite):
