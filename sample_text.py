@@ -35,6 +35,10 @@ def main():
     mapa.read('Libreria/mapaN1.map')
     terreno_plataforma = mapa.get('info','terreno') 
 
+    # Musica
+    musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.ogg')
+    musica_juego = pygame.mixer.Sound('Libreria/Juego_principal.ogg')
+
     # Grupos de sprites
     generadoresPereza = pygame.sprite.Group()
     generadoresMama = pygame.sprite.Group()
@@ -52,11 +56,6 @@ def main():
     finDeJuego = False
     Pausa = False
     InicioJuego = True
-
-
-    musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.wav')
-    musica_intro.play()
-    
 
     # Cargar imagenes
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png")
@@ -204,6 +203,7 @@ def main():
                         Pausa = False
                         #musica_ingame.unpause()
                     if event.key == pygame.K_ESCAPE:
+                        musica_juego.stop()
                         return
 
             
@@ -219,6 +219,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
                         musica_intro.stop()
+                        musica_juego.play()
                         InicioJuego = False
                         #musica_ingame.play()
                     if event.key == pygame.K_ESCAPE:
@@ -226,6 +227,9 @@ def main():
 
         # Modos de juego
         if InicioJuego:
+            # Musica de inicio del juego
+            musica_intro.play()
+
             # Evitar que el personaje se caiga al vacio mientras está la ventana de inicio
             for j in jugadores:
                 # Reconocer que hay un suelo
@@ -345,7 +349,10 @@ def main():
                             if ene.direccion == 0:
                                 ene.direccion = 1
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
                         
                     # Calculo de velocidades mama-entorno
                     if background.velx != 0:
@@ -565,7 +572,7 @@ def main():
                 '''
 
         elif Pausa: # ------------------------------------------------------------------------
-
+            musica_juego.stop()
             # evitar que el jugador caiga al vacio en la pausa
             for j in jugadores:
                 if j.rect.bottom > SUELO:
@@ -634,6 +641,7 @@ def main():
             if Pausa:
                 pantalla.blit(blurbackground,[0,0])
         else:
+            
             pantalla.blit(backgroundInicio,[0,0])
         # dibujar el texto
 
@@ -672,6 +680,7 @@ def main():
             pantalla.blit(opcion2,[ANCHO//2 -80,510])
             pass
         elif InicioJuego:
+
             fuenteMediana = pygame.font.Font(None, 36)
             opcion1 = fuenteMediana.render("Jugar (c)",True,[255,255,255])
             opcion2 = fuenteMediana.render("Salir (ESC)",True,[255,255,255])
