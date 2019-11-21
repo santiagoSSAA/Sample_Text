@@ -119,6 +119,9 @@ def main():
                 p = pl.Plataforma(spriteTerreno,[conteox,conteoy])
                 plataformas.add(p)
                 jugador.lista_plataformas.append(p)
+                for ene in enemigos:
+                    if ene.tipo == 'mama':
+                        ene.listaPlataformas.append(p)
             elif tipo == 'puerta':
                 p = o.GeneradorMama(listaSpritesObjeto[3][2],5,[conteox,conteoy])
                 generadoresMama.add(p)
@@ -303,23 +306,29 @@ def main():
                         chancla.rect.y = ene.rect.y
                             
                     # Movimiento mama (definir los limites de movimiento en la mama)
-                    if ene.rect.bottom == SUELO:
+                    if ene.rect.bottom >= SUELO:
                         if ene.rect.right >= background.rect.right:
                             ene.direccion = 1
                         elif ene.rect.left <= 180:
                             ene.direccion = 0
+                    
+                    if ene.rect.bottom < SUELO:
+                        ene.rect.y += 2
+                        ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas, False)
+                        ene.rect.y -=2
 
-                    #TODO: revisar donde se generan las mamas y hacer que aparezcan un poquito mas abajo
-                    #y ahi si hacer el codigo de las colisiones.
+                        for i in ColisionesMamaPlataforma:
+                            print (i.rect.left, " ", ene.rect.left)
+                            if ene.rect.left >= i.rect.left:
+                                ene.direccion = 0   
+                            if ene.rect.right <= i.rect.right:
+                                ene.direccion = 1
 
-                    #o implemetar un atributo a la mama que guarde las plataformas y bla bla bla.
 
-                    ColisionMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas, False)
-                    for i in ColisionMamaPlataforma:
-                        if ene.rect.left >= i.rect.left:
-                            ene.direccion = 0   
-                        if ene.rect.right <= i.rect.right:
-                            ene.direccion = 1
+                    
+                    
+
+
                         
                     # Calculo de velocidades mama-entorno
                     if background.velx != 0:
@@ -511,7 +520,27 @@ def main():
                         temporizador = 300
                     modificadores.remove(i)
 
-            pass
+            '''
+
+            #colisiones mama
+            for ene in enemigos:
+                if ene.tipo == 'mama':
+                    ene.rect.y += 2
+                    ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, ene.listaPlataformas, False)
+                    ene.rect.y -= 2
+
+                    if ene.rect.bottom < SUELO or len(ColisionesMamaPlataforma) > 0:
+                        print ('yayyy')
+                        #TODO: revisar donde se generan las mamas y hacer que aparezcan un poquito mas abajo
+                        #y ahi si hacer el codigo de las colisiones.
+                        for i in ColisionesMamaPlataforma:
+                            print ('puta vida')
+                            if ene.rect.left >= i.rect.left:
+                                ene.direccion = 0   
+                            if ene.rect.right <= i.rect.right:
+                                ene.direccion = 1
+                '''
+
         elif Pausa: # ------------------------------------------------------------------------
 
             # evitar que el jugador caiga al vacio en la pausa

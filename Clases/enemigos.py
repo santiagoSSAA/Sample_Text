@@ -3,6 +3,7 @@ from pygame.locals import *
 import random
 
 VELOCIDAD = 4
+SUELO = 650
 
 class Mama(pygame.sprite.Sprite):
     def __init__(self,listaSprites):
@@ -20,6 +21,7 @@ class Mama(pygame.sprite.Sprite):
         self.direccion = random.randrange(2)
         # temporizador de proyectil
         self.temporizadorProyectil = random.randrange(50,150)
+        self.listaPlataformas = []
         """
         0 = derecha
         1 = izquierda
@@ -43,8 +45,12 @@ class Mama(pygame.sprite.Sprite):
         """
 
     def update(self):
-        # Define el movimiento
+
+        # Desplazar izquierda/derecha
         self.movimiento()
+
+
+
         # Animar el sprite
         self.animarSprite()
 
@@ -52,8 +58,23 @@ class Mama(pygame.sprite.Sprite):
             self.temporizadorProyectil -= 1
         else:
             self.temporizadorProyectil = random.randrange(50,150)
-        pass
+        '''
+        
+        #bajamos 2 pixeles para verificar si es una plataforma
+        self.rect.y += 2
+        ColisionesMamaPlataforma = pygame.sprite.spritecollide(self, self.listaPlataformas, False)
+        self.rect.y -= 2
 
+        if len(ColisionesMamaPlataforma) > 0 or self.rect.bottom < SUELO:
+            #TODO: revisar donde se generan las mamas y hacer que aparezcan un poquito mas abajo
+            #y ahi si hacer el codigo de las colisiones.
+
+            for i in ColisionesMamaPlataforma:
+                if self.rect.left >= i.rect.left:
+                    ene.direccion = 0   
+                if self.rect.right <= i.rect.right:
+                    ene.direccion = 1
+        '''
     def movimiento(self):
         self.rect.x += self.velx
         self.rect.y += self.vely
