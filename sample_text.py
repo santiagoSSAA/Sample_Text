@@ -25,6 +25,7 @@ def main():
     pygame.init()
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
     reloj = pygame.time.Clock()
+
     temporizador = 300
     rapidez = FPS
     contadorTiempo = 1
@@ -50,6 +51,11 @@ def main():
     finDeJuego = False
     Pausa = False
     InicioJuego = True
+
+
+    musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.wav')
+    musica_intro.play()
+    
 
     # Cargar imagenes
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png")
@@ -150,6 +156,7 @@ def main():
 
     # ----------------------------------------------------------------------------------------------------
     while True:
+        #musica_ingame = pygame.mixer.Sound('Libreria/Juego_principal.wav')
         # Analizar vidas restantes
         if jugador.vida < 1:
             finDeJuego = True
@@ -175,6 +182,7 @@ def main():
                             jugador.salto()
                     if event.key == pygame.K_p:
                         Pausa = True  
+                        #musica_ingame.pause()
 
                 if event.type == pygame.KEYUP:
                     if event.key != pygame.K_UP:
@@ -186,6 +194,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_x:
                         Pausa = False
+                        #musica_ingame.unpause()
                     if event.key == pygame.K_ESCAPE:
                         return
 
@@ -201,7 +210,9 @@ def main():
             if InicioJuego:
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
+                        musica_intro.stop()
                         InicioJuego = False
+                        #musica_ingame.play()
                     if event.key == pygame.K_ESCAPE:
                         return
 
