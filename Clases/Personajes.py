@@ -87,19 +87,14 @@ class Jugador(pygame.sprite.Sprite):
         self.animarSprite()
         
         # activar/desactivar stun
-        if self.tiempoStun > 0:
-            self.stun()
-        else:
+        if self.tiempoStun <= 0:
             self.tiempoStun = 0
+
         # activar/desactivar slow
-        if self.tiempoSlow > 0:
-            self.slow()
-        else:
+        if self.tiempoSlow <= 0:
             self.tiempoSlow = 0
         # activar/desactivar speed
-        if self.tiempoSpeed > 0:
-            self.speed()
-        else:
+        if self.tiempoSpeed <= 0:
             self.tiempoSpeed = 0
             
 
