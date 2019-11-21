@@ -60,7 +60,7 @@ def main():
     spriteBackground = pygame.image.load("Sprites/background.gif")
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
     spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
-
+    spriteGeneradorPereza = pygame.image.load("Sprites/trash.png")
     spriteTerreno =  pygame.image.load(terreno_plataforma)
 
     # lista de sprites
@@ -76,24 +76,6 @@ def main():
     jugador = pp.Jugador(listaSpritesSantiago)
     jugador.vida = NUMEROVIDAS
     jugadores.add(jugador)
-
-    """
-    # Sprites y clase Objetos a recolectar
-    for i in range(1,5):
-        objeto = None
-        if i  == 1:
-            objeto = o.Objeto(listaSpritesObjeto[0][2],i)
-        else:
-            objeto = o.Objeto(listaSpritesObjeto[2][i-2],i)
-        objetos.add(objeto)
-    
-    # Sprites y clase modificadores
-    cantidadObjetosCafe = 10
-    for i in range(1,cantidadObjetosCafe+1):
-        modificador = o.Cafe(listaSpritesObjeto[3][0])
-        modificadores.add(modificador)
-        pass
-    """
 
     # Sprites y clase Corazones
     numero_Corazones = jugador.vida
@@ -113,25 +95,9 @@ def main():
                     c.rect.x = 10 + (35*(5))
                     c.rect.y = c.rect.y + (35*(i//5))
 
-    """
-    # crea puertas (generadores de enemigos)
-    numero_Puertas = random.randrange(2,5)
-    for i in range(numero_Puertas):
-        puerta = o.Generador(listaSpritesObjeto[3][2],5,SUELO)
-        generadores.add(puerta)
-    """
-
     # Sprites y clase imagen
     background = ba.Imagen(spriteBackground,1)
     fondos.add(background)
-
-    #Sprites y clase Plataforma
-    '''
-    plataforma = pl.Plataforma(listaSpritesTerreno[9][6])
-    plataformas.add(plataforma)
-    '''
-    #aqui actualizo la lista que tiene guardada el jugador con las plataformas
-    ##jugador.lista_plataformas.append(plataforma)
 
     #--------------------------------------------
     #MAS O MENOS DESDE AQUI INCORPORO LAS PLATAFORMAS EN EL MAPA
@@ -174,7 +140,7 @@ def main():
                 m = o.Objeto(listaSpritesObjeto[2][0],2,[conteox,conteoy])
                 objetos.add(m)
             elif tipo == 'perezita':
-                p = o.GeneradorPereza(listaSpritesObjeto[3][1],6,[conteox,conteoy])
+                p = o.GeneradorPereza(spriteGeneradorPereza,6,[conteox,conteoy])
                 generadoresPereza.add(p)
 
 
@@ -319,14 +285,6 @@ def main():
                     if ene.rect.right <= i.rect.right:
                         ene.direccion = 1
                     
-                '''
-                if ene.rect.right >= background.rect.right:
-                    ene.direccion = 1
-                elif ene.rect.left <= 180:
-                    ene.direccion = 0
-                '''
-
-                    
                 # Calculo de velocidades mama-entorno
                 if background.velx != 0:
                     ene.velx += background.velx
@@ -379,7 +337,7 @@ def main():
             if len(enemigos) < (3*len(generadoresPereza)):
                 if g.temp == 0:
                     enemigo = e.Pereza(listaSpritesPereza)
-                    enemigo.rect.x = g.rect.x + random.randrange(-50,51)
+                    enemigo.rect.x = g.rect.x + random.randrange(-30,31)
                     enemigo.rect.bottom = g.rect.bottom + 65
                     enemigos.add(enemigo)                    
                     g.salirSpawn = False
