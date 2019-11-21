@@ -69,7 +69,8 @@ def main():
     listaSpritesMama = lf.recortarSprite(pantalla,spriteMama,4,6)
     listaSpritesPereza = lf.recortarSprite(pantalla,spritePereza,3,1)
     listaSpritesChancla = lf.recortarSprite(pantalla,spriteChancla,4,2)
-    listaSpritesTerreno = lf.recortarSprite(pantalla,spriteTerreno,32,12)
+
+    #listaSpritesTerreno = lf.recortarSprite(pantalla,spriteTerreno,32,12)
 
     # Definir el objeto jugador con sus respectivas vidas
     jugador = pp.Jugador(listaSpritesSantiago)
@@ -115,7 +116,7 @@ def main():
             if  tipo == 'vacio':
                 pass
             elif tipo == 'plataforma':
-                p = pl.Plataforma(listaSpritesTerreno[9][6],[conteox,conteoy])
+                p = pl.Plataforma(spriteTerreno,[conteox,conteoy])
                 plataformas.add(p)
                 jugador.lista_plataformas.append(p)
             elif tipo == 'puerta':
