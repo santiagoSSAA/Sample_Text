@@ -178,26 +178,10 @@ class Jugador(pygame.sprite.Sprite):
         ColisionesPlataformas = pygame.sprite.spritecollide(self, self.lista_plataformas, False)
         self.rect.y -= 2
 
+
         # Si esta listo para saltar, aumentamos nuestra velocidad hacia arriba
         if len(ColisionesPlataformas) > 0 or self.rect.bottom >= SUELO:
             self.salto()
-
-    def stun(self):
-        """self.velx = 0
-        self.vely = 0"""
-        pass
-
-    def slow(self):
-        """self.velx = self.velx //3
-        if self.vely != 0:
-            self.vely = self.vely //3"""
-        pass
-
-    def speed(self):
-        """self.velx = self.velx*2
-        if self.vely != 0:
-            self.vely = self.vely *2"""
-        pass
 
     def calcularGravedad(self,gravedad):
         if self.vely == 0:
