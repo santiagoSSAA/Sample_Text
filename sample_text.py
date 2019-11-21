@@ -40,6 +40,7 @@ def main():
     generadoresMama = pygame.sprite.Group()
     modificadores = pygame.sprite.Group()
     plataformas = pygame.sprite.Group()
+    plataformas_Mama = pygame.sprite.Group()
     proyectiles = pygame.sprite.Group()
     corazones = pygame.sprite.Group()
     jugadores = pygame.sprite.Group()
@@ -149,6 +150,13 @@ def main():
             elif tipo == 'perezita':
                 p = o.GeneradorPereza(spriteGeneradorPereza,6,[conteox,conteoy])
                 generadoresPereza.add(p)
+            elif tipo == 'plataforma_Mama':
+                x = pl.Plataforma(spriteTerreno,[conteox,conteoy])
+                plataformas_Mama.add(x)
+                for ene in enemigos:
+                    if ene.tipo == 'mama':
+                        ene.listaPlataformas.append(x)
+                pass
 
 
             conteox += 50
@@ -325,19 +333,17 @@ def main():
                     
                     if ene.rect.bottom < SUELO:
                         ene.rect.y += 2
-                        ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas, False)
+                        ColisionesMamaPlataforma = pygame.sprite.spritecollide(ene, plataformas_Mama, False)
                         ene.rect.y -=2
 
-                        for i in ColisionesMamaPlataforma:
-                            print (i.rect.left, " ", ene.rect.left)
-                            if ene.rect.left >= i.rect.left:
+                        if len(ColisionesMamaPlataforma) > 0:
+                            print (ene.rect.bottom, ' ', i.rect.top)
+                            if ene.direccion == 1:
+                                
                                 ene.direccion = 0   
-                            if ene.rect.right <= i.rect.right:
+                                print('shit')
+                            if ene.direccion == 0:
                                 ene.direccion = 1
-
-
-                    
-                    
 
 
                         
@@ -373,6 +379,12 @@ def main():
                     ob.velx = background.velx
                 else:
                     ob.velx = 0
+
+            for m in plataformas_Mama:
+                if m.rect.y != 30:
+                    m.velx = background.velx
+                else:
+                    m.velx = 0
 
             for g in generadoresMama:
                 # Generar mamas
@@ -602,6 +614,7 @@ def main():
             proyectiles.update()
             modificadores.update()
             plataformas.update()
+            plataformas_Mama.update()
         # Llenar pantala en caso de no tener background
         pantalla.fill([0,0,0])
         # Dibujar los objetos en la pantalla
@@ -617,6 +630,7 @@ def main():
                 proyectiles.draw(pantalla)
                 modificadores.draw(pantalla)
                 plataformas.draw(pantalla)
+                plataformas_Mama.draw(pantalla)
             if Pausa:
                 pantalla.blit(blurbackground,[0,0])
         else:
