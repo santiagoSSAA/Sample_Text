@@ -204,7 +204,7 @@ def main():
                     if event.key != pygame.K_UP:
                         jugador.idle()
                         background.idle()
-                    if event.key != pygame.K_LEFT or event.key != pygame.K_RIGHT or event.key == pygame.K_UP:
+                    if event.key in [pygame.K_LEFT,pygame.K_RIGHT]:
                         jugador.velx = 0
 
             # Manejo de las teclas (pausa)
@@ -491,8 +491,8 @@ def main():
                 ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
                 for i in ColisionJugadorEnemigo:
                     if ene.tipo == "mama" and i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
-                        vidas = jugador.vida
-                        vidas -= 1
+                        jugador.vida -=1
+                        #vidas = jugador.vida
 
                     elif ene.tipo == "pereza":
                         if jugador.tiempoSlow == 0:
@@ -516,9 +516,10 @@ def main():
             for ch in proyectiles:
                 colisionJugadorChanclas = pygame.sprite.spritecollide(ch, jugadores,False)
                 for i in colisionJugadorChanclas:
+                    jugador.salto()
                     jugador.vida -= 1
                     if jugador.tiempoStun == 0:
-                        jugador.tiempoStun = 1
+                        jugador.tiempoStun = 2
                     proyectiles.remove(ch)
 
                     # actualizar el movimiento del jugador con el efecto incluido
