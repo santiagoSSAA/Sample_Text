@@ -27,6 +27,7 @@ def main():
     reloj = pygame.time.Clock()
 
     temporizador = 180
+    copiaTiempoMaximo = 180
     rapidez = FPS
     contadorTiempo = 1
 
@@ -210,7 +211,7 @@ def main():
             if Pausa and (not finDeJuego) and (not InicioJuego) and (not Ganaste):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_x:
-                        musica_juego.play()
+                        musica_juego.play(loops = int(copiaTiempoMaximo // musica_juego.get_length()))
                         Pausa = False
                         #musica_ingame.unpause()
                     if event.key == pygame.K_ESCAPE:
@@ -242,7 +243,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_c:
                         musica_intro.stop()
-                        musica_juego.play()
+                        musica_juego.play(loops = int(copiaTiempoMaximo // musica_juego.get_length()))
                         InicioJuego = False
                     if event.key == pygame.K_ESCAPE:
                         return
@@ -250,7 +251,7 @@ def main():
         # Modos de juego
         if InicioJuego:
             # Musica de inicio del juego
-            musica_intro.play()
+            musica_intro.play(loops = int(copiaTiempoMaximo // musica_intro.get_length()))
 
             # Evitar que el personaje se caiga al vacio mientras está la ventana de inicio
             for j in jugadores:
