@@ -475,7 +475,8 @@ def main():
             for i in ColisionesObjetos:
                 i.rect.x = 300 + (50*(i.identificador))
                 i.rect.y = 30
-                jugador.objetosObtenidos.append(i.identificador)
+                if i.identificador not in jugador.objetosObtenidos:
+                    jugador.objetosObtenidos.append(i.identificador)
 
             # Colisiones jugador a Enemigos
             ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
