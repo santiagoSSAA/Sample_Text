@@ -527,7 +527,7 @@ def main():
                     jugador.salto()
                     jugador.vida -= 1
                     if jugador.tiempoStun == 0:
-                        jugador.tiempoStun = 2
+                        jugador.tiempoStun = 1
                     proyectiles.remove(ch)
 
                     # actualizar el movimiento del jugador con el efecto incluido
@@ -712,15 +712,6 @@ def main():
             pantalla.blit(info,[ANCHO//2 -180,300])
             pantalla.blit(opcion1,[ANCHO//2 -80,450])
             pantalla.blit(opcion2,[ANCHO//2 -80,510])
-            pass
-        elif InicioJuego:
-
-            fuenteMediana = pygame.font.Font(None, 36)
-            opcion1 = fuenteMediana.render("Jugar (c)",True,[255,255,255])
-            opcion2 = fuenteMediana.render("Salir (ESC)",True,[255,255,255])
-
-            pantalla.blit(opcion1,[ANCHO//2 -80,390])
-            pantalla.blit(opcion2,[ANCHO//2 -80,450])
             pass
         elif Ganaste:
             fuente = pygame.font.Font(None,96)
