@@ -18,7 +18,7 @@ SUELO = ALTO - 100
 LIMITE = ANCHO //2
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
-NUMEROVIDAS = 1
+NUMEROVIDAS = 5
 # -------------------------------------------------------------------------------
 def main():
     # Definir los parametros iniciales de pygame
@@ -171,6 +171,9 @@ def main():
 
     # ----------------------------------------------------------------------------------------------------
     while True:
+        print (jugador.objetosObtenidos)
+        if len(jugador.objetosObtenidos) == 4:
+            Ganaste = True
         # Analizar vidas restantes
         if jugador.vida < 1:
             finDeJuego = True
@@ -409,7 +412,7 @@ def main():
 
             for g in generadoresMama:
                 # Generar mamas
-                if len(enemigos) < (3*len(generadoresMama)):
+                if len(enemigos) < (2*len(generadoresMama)):
                     if g.temp == 0:
                         g.salirSpawn = True
                     if g.salirSpawn:
@@ -470,11 +473,9 @@ def main():
             # Colisiones con objetos
             ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
             for i in ColisionesObjetos:
-                ColisionesObjetos[0].rect.x = 300 + (50*(ColisionesObjetos[0].identificador))
-                ColisionesObjetos[0].rect.y = 30
-                jugador.objetosObtenidos.append(ColisionesObjetos[0].identificador)
-                if len(jugador.objetosObtenidos) >= 4:
-                    Ganaste = True
+                i.rect.x = 300 + (50*(i.identificador))
+                i.rect.y = 30
+                jugador.objetosObtenidos.append(i.identificador)
 
             # Colisiones jugador a Enemigos
             ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
@@ -490,11 +491,7 @@ def main():
                 for i in ColisionJugadorEnemigo:
                     if ene.tipo == "mama" and i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
                         vidas = jugador.vida
-                        jugadores.remove(i)
                         vidas -= 1
-                        jugador = pp.Jugador(listaSpritesSantiago)
-                        jugador.vida = vidas
-                        jugadores.add(jugador)
 
                     elif ene.tipo == "pereza":
                         if jugador.tiempoSlow == 0:
