@@ -18,7 +18,7 @@ SUELO = ALTO - 100
 LIMITE = ANCHO //2
 LIMITEINFERIOR = ANCHO-LIMITE
 FPS = 35
-NUMEROVIDAS = 5
+NUMEROVIDAS = 3
 # -------------------------------------------------------------------------------
 def main():
     # Definir los parametros iniciales de pygame
@@ -26,7 +26,7 @@ def main():
     pantalla = pygame.display.set_mode([ANCHO,ALTO])
     reloj = pygame.time.Clock()
 
-    temporizador = 300
+    temporizador = 180
     rapidez = FPS
     contadorTiempo = 1
 
@@ -171,7 +171,6 @@ def main():
 
     # ----------------------------------------------------------------------------------------------------
     while True:
-        print (jugador.objetosObtenidos)
         if len(jugador.objetosObtenidos) == 4:
             Ganaste = True
         # Analizar vidas restantes
@@ -185,7 +184,7 @@ def main():
         # Eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                pass
 
             # Manejo de las teclas (in game)
             if (not Pausa) and (not finDeJuego) and (not InicioJuego) and (not Ganaste):
@@ -224,6 +223,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         main()
+                        return
                     if event.key == pygame.K_ESCAPE:
                         return
 
@@ -232,6 +232,7 @@ def main():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_r:
                         main()
+                        return
                     if event.key == pygame.K_ESCAPE:
                         return
 
@@ -426,7 +427,7 @@ def main():
 
             for g in generadoresPereza:
                 #generar perezas
-                if len(enemigos) < (3*len(generadoresPereza)):
+                if len(enemigos) < (2*len(generadoresPereza)):
                     if g.temp == 0:
                         enemigo = e.Pereza(listaSpritesPereza)
                         enemigo.rect.x = g.rect.x + random.randrange(-15,16)
@@ -491,6 +492,13 @@ def main():
                 ColisionJugadorEnemigo = pygame.sprite.spritecollide(ene, jugadores, False)
                 for i in ColisionJugadorEnemigo:
                     if ene.tipo == "mama" and i.rect.y == ene.rect.y and abs(i.rect.x - ene.rect.x) <= rangoChoque:
+                        jugador.salto()
+
+                        if jugador.accion <= 3:
+                            jugador.rect.x -= 15
+                        else:
+                            jugador.rect.x += 15
+
                         jugador.vida -=1
                         #vidas = jugador.vida
 
@@ -730,6 +738,8 @@ def main():
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)
+    
+    return
     
 # -------------------------------------------------------------------------------
 if __name__ == "__main__":

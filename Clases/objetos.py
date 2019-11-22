@@ -11,10 +11,29 @@ class Objeto(pygame.sprite.Sprite):
         self.vely = 0
         self.rect.x = pos[0]
         self.rect.y = pos[1]
+        self.copiaDeLaPosicionEnY = pos[1]
         self.identificador = identificador
+        self.puntoDeElevacion = 0
 
     def update(self):
+        # movimiento en X
         self.rect.x += self.velx
+
+        # Generar Movimiento Cool
+
+        # Lista de Posiciones en las que oscilara el objeto
+        listaMovimiento = [ 0,-1,-2,-3,-4,-5,-6,-7,-8,-9,-10,-11,-12,-13,-14,-15,-14,-13,-12,-11,-10,
+                            -9,-8,-7,-6,-5,-4,-3,-2,-1]
+        
+        # Actualizacion del punto de elevacion
+        if self.puntoDeElevacion >= len(listaMovimiento) - 1:
+            self.puntoDeElevacion = 0
+        else:
+            self.puntoDeElevacion += 1
+
+        if self.rect.y != 30:
+            self.rect.y = self.copiaDeLaPosicionEnY + listaMovimiento[self.puntoDeElevacion]
+
         # posicionar los corazones
         if self.identificador == 5 or self.identificador == 6:
             self.rect.y = 30
