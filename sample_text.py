@@ -37,8 +37,10 @@ def main():
     # Musica
     musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.ogg')
     musica_intro.set_volume(0.05)
-    musica_juego = pygame.mixer.Sound('Libreria/Juego_principal.ogg')
-    musica_juego.set_volume(0.05)
+    musica_juego = pygame.mixer.Sound('Libreria/ingame.ogg')
+    musica_juego.set_volume(0.55)
+    efecto_objeto = pygame.mixer.Sound('Libreria/Objetos.ogg')
+    efecto_objeto.set_volume(0.05)
 
     # Grupos de sprites
     generadoresPereza = pygame.sprite.Group()
@@ -427,7 +429,7 @@ def main():
 
             for g in generadoresPereza:
                 #generar perezas
-                if len(enemigos) < (2*len(generadoresPereza)):
+                if len(enemigos) < (3*len(generadoresPereza)):
                     if g.temp == 0:
                         enemigo = e.Pereza(listaSpritesPereza)
                         enemigo.rect.x = g.rect.x + random.randrange(-15,16)
@@ -474,6 +476,10 @@ def main():
             # Colisiones con objetos
             ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
             for i in ColisionesObjetos:
+                
+                if i.identificador not in jugador.objetosObtenidos:
+                    efecto_objeto.play()
+
                 i.rect.x = 300 + (50*(i.identificador))
                 i.rect.y = 30
                 if i.identificador not in jugador.objetosObtenidos:
@@ -603,6 +609,7 @@ def main():
 
             pass
         elif finDeJuego: # --------------------------------------------------------------------------------------
+            musica_juego.stop()
 
             for j in jugadores:
                 # Reconocer que hay un suelo
@@ -622,6 +629,8 @@ def main():
             pass 
 
         elif Ganaste:#----------------------------------------------------------------
+            musica_juego.stop()
+            
             #El jugador colecciono todos los elementos
             for j in jugadores:
                 # Reconocer que hay un suelo
