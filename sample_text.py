@@ -32,8 +32,7 @@ def main():
 
     # Importar las plataformas
     mapa = configparser.ConfigParser()
-    mapa.read('Libreria/mapaN1.map')
-    terreno_plataforma = mapa.get('info','terreno') 
+    mapa.read('Libreria/mapaN1.map') 
 
     # Musica
     musica_intro = pygame.mixer.Sound('Libreria/menu_inicio.ogg')
@@ -44,6 +43,7 @@ def main():
     # Grupos de sprites
     generadoresPereza = pygame.sprite.Group()
     generadoresMama = pygame.sprite.Group()
+    objetosParaFondo = pygame.sprite.Group()
     modificadores = pygame.sprite.Group()
     plataformas = pygame.sprite.Group()
     plataformas_Mama = pygame.sprite.Group()
@@ -54,10 +54,15 @@ def main():
     objetos = pygame.sprite.Group()
     fondos = pygame.sprite.Group()
 
+
     # variables ventanas
     finDeJuego = False
     Pausa = False
     InicioJuego = True
+    Ganaste = False
+
+    #Este es el sprite con el que se hacen las plataformas y las casas cutres
+    Suelo_Casa = mapa.get('info','Piso_Casa')
 
     # Cargar imagenes
     spriteSantiago = pygame.image.load("Sprites/Sprite_Sheet_Santiago.png")
@@ -67,7 +72,7 @@ def main():
     spritePereza= pygame.image.load("Sprites/Sprite_Sheet_Pereza.png")
     spriteChancla = pygame.image.load("Sprites/Sprite_Sheet_Chancla.png")
     spriteGeneradorPereza = pygame.image.load("Sprites/trash.png")
-    spriteTerreno =  pygame.image.load(terreno_plataforma)
+    spriteVarios =  pygame.image.load(Suelo_Casa)
     blurbackground = pygame.image.load("Sprites/blur_background.png").convert_alpha()
     backgroundInicio = pygame.image.load("Sprites/INICIO.png")
 
@@ -77,8 +82,7 @@ def main():
     listaSpritesMama = lf.recortarSprite(pantalla,spriteMama,4,6)
     listaSpritesPereza = lf.recortarSprite(pantalla,spritePereza,3,1)
     listaSpritesChancla = lf.recortarSprite(pantalla,spriteChancla,4,2)
-
-    #listaSpritesTerreno = lf.recortarSprite(pantalla,spriteTerreno,32,12)
+    listaSpritesOtros = lf.recortarSprite(pantalla,spriteVarios,5,5)
 
     # Definir el objeto jugador con sus respectivas vidas
     jugador = pp.Jugador(listaSpritesSantiago)
@@ -124,7 +128,7 @@ def main():
             if  tipo == 'vacio':
                 pass
             elif tipo == 'plataforma':
-                p = pl.Plataforma(spriteTerreno,[conteox,conteoy],"normal")
+                p = pl.Plataforma(listaSpritesOtros[0][4],[conteox,conteoy],"normal")
                 plataformas.add(p)
                 jugador.lista_plataformas.append(p)
                 for ene in enemigos:
@@ -141,9 +145,9 @@ def main():
                 objetos.add(ph)
             elif tipo == 'cafe':
                 c = o.Cafe(listaSpritesObjeto[3][0],[conteox,conteoy])
-                objetos.add(c)
+                modificadores.add(c)
             elif tipo == 'python':
-                p = o.Objeto(listaSpritesObjeto[3][2],4,[conteox,conteoy])
+                p = o.Objeto(listaSpritesObjeto[2][2],4,[conteox,conteoy])
                 objetos.add(p)
             elif tipo == 'musica':
                 m = o.Objeto(listaSpritesObjeto[2][0],2,[conteox,conteoy])
@@ -152,13 +156,15 @@ def main():
                 p = o.GeneradorPereza(spriteGeneradorPereza,6,[conteox,conteoy])
                 generadoresPereza.add(p)
             elif tipo == 'plataforma_Mama':
-                x = pl.Plataforma(spriteTerreno,[conteox,conteoy],"borde")
+                x = pl.Plataforma(listaSpritesOtros[0][4],[conteox,conteoy],"borde")
                 plataformas_Mama.add(x)
                 for ene in enemigos:
                     if ene.tipo == 'mama':
                         ene.listaPlataformas.append(x)
                 pass
-
+            elif tipo == 'casa':
+                c = o.Objetos_De_Fondo(listaSpritesOtros[2][4],[conteox,conteoy])
+                objetosParaFondo.add(c)
 
             conteox += 50
         conteoy += 50
@@ -179,7 +185,7 @@ def main():
                 return
 
             # Manejo de las teclas (in game)
-            if (not Pausa) and (not finDeJuego) and (not InicioJuego):
+            if (not Pausa) and (not finDeJuego) and (not InicioJuego) and (not Ganaste):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
                         jugador.derecha()
@@ -195,9 +201,11 @@ def main():
                     if event.key != pygame.K_UP:
                         jugador.idle()
                         background.idle()
+                    if event.key != pygame.K_LEFT or event.key != pygame.K_RIGHT or event.key == pygame.K_UP:
+                        jugador.velx = 0
 
             # Manejo de las teclas (pausa)
-            if Pausa and (not finDeJuego) and (not InicioJuego):
+            if Pausa and (not finDeJuego) and (not InicioJuego) and (not Ganaste):
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_x:
                         musica_juego.play()
@@ -215,6 +223,15 @@ def main():
                         main()
                     if event.key == pygame.K_ESCAPE:
                         return
+
+            #Manejo Teclas de Ganaste:
+            if Ganaste and (not InicioJuego):
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        main()
+                    if event.key == pygame.K_ESCAPE:
+                        return
+
             
             # Manejo de las teclas (Inicio del juego):
             if InicioJuego:
@@ -223,7 +240,6 @@ def main():
                         musica_intro.stop()
                         musica_juego.play()
                         InicioJuego = False
-                        #musica_ingame.play()
                     if event.key == pygame.K_ESCAPE:
                         return
 
@@ -244,7 +260,7 @@ def main():
                 fon.velx = 0
             pass
 
-        elif (not InicioJuego) and (not Pausa) and (not finDeJuego): # ----------------------------------------------------------------------
+        elif (not InicioJuego) and (not Pausa) and (not finDeJuego) and (not Ganaste): # ----------------------------------------------------------------------
 
             # Logica del tiempo
             if contadorTiempo < rapidez:
@@ -442,19 +458,30 @@ def main():
 
             for pla in plataformas:
                 pla.velx = background.velx
+
+            #Sincronizar la velocidad de los objetos de fondo con el fondo
+            for of in objetosParaFondo:
+                if of.rect.y != 30:
+                    of.velx = background.velx
+                else:
+                    of.velx = 0
+
             # ----------------------------------------------------------------------------------------------------
             # Colisiones con objetos
             ColisionesObjetos = pygame.sprite.spritecollide(jugador, objetos, False)
-            if len(ColisionesObjetos) > 0:
+            for i in ColisionesObjetos:
                 ColisionesObjetos[0].rect.x = 300 + (50*(ColisionesObjetos[0].identificador))
                 ColisionesObjetos[0].rect.y = 30
                 jugador.objetosObtenidos.append(ColisionesObjetos[0].identificador)
+                if len(jugador.objetosObtenidos) >= 4:
+                    Ganaste = True
 
             # Colisiones jugador a Enemigos
             ColisionesEnemigos = pygame.sprite.spritecollide(jugador, enemigos, False)
             for i in ColisionesEnemigos:
                 if i.tipo != "pereza" and abs(jugador.rect.bottom - i.rect.top) <= 7 and jugador.vely > 0 :
                     enemigos.remove(i)
+
         
             # Colisiones Enemigo contra jugadores
             for ene in enemigos:
@@ -471,8 +498,9 @@ def main():
 
                     elif ene.tipo == "pereza":
                         if jugador.tiempoSlow == 0:
-                            jugador.velx=0
+                            #jugador.velx=0
                             jugador.tiempoSlow = 2
+
 
                     # actualizar el movimiento del jugador con el efecto incluido
                     if jugador.accion == 0:
@@ -542,7 +570,7 @@ def main():
                 ColisionesModificadores = pygame.sprite.spritecollide(jugador, modificadores,False)
                 for i in ColisionesModificadores:
                     if jugador.tiempoSpeed == 0:
-                        jugador.tiempoSpeed = 2
+                        jugador.tiempoSpeed = 1
                     if temporizador + 10 <= 300:
                         temporizador += 10
                     else:
@@ -584,12 +612,32 @@ def main():
             for fon in fondos:
                 fon.velx = 0
 
-            pass         
+            pass 
+
+        elif Ganaste:#----------------------------------------------------------------
+            #El jugador colecciono todos los elementos
+            for j in jugadores:
+                # Reconocer que hay un suelo
+                if j.rect.bottom > SUELO:
+                    j.rect.bottom = SUELO
+                    j.vely = 0
+
+            # Texto de fin del juego
+            fuente = pygame.font.Font(None,38)
+            info = fuente.render('¡GANASTE!',True,[255,255,255])
+            pantalla.blit(info,[ANCHO//2-100,ALTO//2])      
+            
+            # dejar estatico el fondo:
+            for fon in fondos:
+                fon.velx = 0
+            pass
+                   
     
         # ----------------------------------------------------------------------------------------------------
         # Actualizaciones
-        if (not Pausa) and (not finDeJuego):
+        if (not Pausa) and (not finDeJuego) and (not Ganaste):
             fondos.update()
+            objetosParaFondo.update()
             jugadores.update()
             enemigos.update()
             objetos.update()
@@ -605,12 +653,13 @@ def main():
         # Dibujar los objetos en la pantalla
         if not InicioJuego:
             fondos.draw(pantalla)
-            if not finDeJuego:
-                enemigos.draw(pantalla)
-                jugadores.draw(pantalla)
+            if not finDeJuego or (not Ganaste):
                 objetos.draw(pantalla)
+                objetosParaFondo.draw(pantalla)
                 generadoresMama.draw(pantalla)
                 generadoresPereza.draw(pantalla)
+                enemigos.draw(pantalla)
+                jugadores.draw(pantalla)
                 corazones.draw(pantalla)
                 proyectiles.draw(pantalla)
                 modificadores.draw(pantalla)
@@ -623,7 +672,7 @@ def main():
             pantalla.blit(backgroundInicio,[0,0])
         # dibujar el texto
 
-        if (not InicioJuego) and (not Pausa) and (not finDeJuego):
+        if (not InicioJuego) and (not Pausa) and (not finDeJuego) and (not Ganaste):
             fuente = pygame.font.Font(None,24)
             infovidas = fuente.render("VIDAS",True,[0,0,0])
             pantalla.blit(infovidas,[55,20])
@@ -666,6 +715,19 @@ def main():
             pantalla.blit(opcion1,[ANCHO//2 -80,390])
             pantalla.blit(opcion2,[ANCHO//2 -80,450])
             pass
+        elif Ganaste:
+            fuente = pygame.font.Font(None,96)
+            fuenteMediana = pygame.font.Font(None, 36)
+
+            info = fuente.render("GANASTE",True,[255,255,255])
+            opcion1 = fuenteMediana.render("Reiniciar (r)",True,[255,255,255])
+            opcion2 = fuenteMediana.render("Salir (ESC)",True,[255,255,255])
+
+            pantalla.blit(info,[ANCHO//2 -180,300])
+            pantalla.blit(opcion1,[ANCHO//2 -80,450])
+            pantalla.blit(opcion2,[ANCHO//2 -80,510])
+            pass
+
         # Refrescar la pantalla
         pygame.display.flip()
         reloj.tick(FPS)

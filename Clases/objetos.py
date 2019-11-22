@@ -70,8 +70,6 @@ class GeneradorMama(pygame.sprite.Sprite):
         else:
             self.temp = random.randrange(100,150)
 
-   
-
 
 # -------------------------------------------------------------------------------
 class Corazon(pygame.sprite.Sprite):
@@ -108,6 +106,21 @@ class Cafe(pygame.sprite.Sprite):
 
     def movimiento(self):
         self.rect.x += self.velx
+#-------------------------------------------------
+#Son objetos que no interactuan en ningun sentido con el usuario, son 'adorno'
+class Objetos_De_Fondo(pygame.sprite.Sprite):
+    def __init__(self,image,pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
+        self.rect.x = pos[0]
+        self.rect.y = pos[1] 
+        self.velx = 0
+
+    def update(self):
+        self.rect.x += self.velx
+
+
 
 #1: libro
 #2: musica
